@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autonomous AI agents that run your business operations | yorilabs.ai</title>
+<meta name="author" content="yorilabs.ai">
+<meta name="description" content="Replace human-heavy workflows with intelligent AI agents that sell, support, engage and grow your brand. Continuously, accurately, and without burnout. 1350+ hours automated monthly.">
+<meta name="keywords" content="AI automation, AI agents, sales automation, customer support AI, business operations, workflow automation">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antonio:wght@400..700&family=Archivo:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="icon" type="image/png" href="assets/brand/favicon-180.png">
+<link rel="apple-touch-icon" href="assets/brand/favicon-180.png">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<!-- ── BasePreloader ───────────────────────────────────────── -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="pre-inner">
+    <img class="pre-logo" src="assets/brand/yorilabsailogo.png" alt="yorilabs.ai" width="1664" height="782">
+    <span class="pre-count" id="preCount">0</span>
+  </div>
+  <div class="pre-bar"><i id="preBar"></i></div>
+</div>
+
+<!-- ── BaseIndicator ───────────────────────────────────────── -->
+<div class="progress" aria-hidden="true"><i id="progBar"></i></div>
+
+<!-- ── BaseHeader ────────────────────────────────── -->
+<header class="hdr" id="hdr">
+  <a class="hdr-mark" href="#top" aria-label="yorilabs.ai home">
+    <img src="assets/brand/yorilabsailogo-ink.png" alt="yorilabs.ai" width="1664" height="782">
+  </a>
+  <nav class="hdr-nav" aria-label="Primary">
+    <a href="#how">How it works</a>
+    <a href="#playbook">Playbook</a>
+    <a href="#products">Products</a>
+    <a href="#contact">Contact <i class="dot"></i></a>
+  </nav>
+  <button class="hdr-menu" type="button" aria-label="Open menu"
+          aria-expanded="false" aria-controls="mnav">
+    <span></span><span></span>
+  </button>
+</header>
+
+<!-- ── MobileNav ─ the burger has to open onto something ──── -->
+<div class="mnav" id="mnav" hidden>
+  <div class="mnav-top">
+    <a class="mnav-mark" href="#top" aria-label="yorilabs.ai home">
+      <img src="assets/brand/yorilabsailogo-ink.png" alt="yorilabs.ai" width="1664" height="782">
+    </a>
+    <button class="mnav-x" type="button" aria-label="Close menu">
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <nav class="mnav-links" aria-label="Primary">
+    <a href="#how">How it works</a>
+    <a href="#playbook">Playbook</a>
+    <a href="#products">Products</a>
+    <a href="#contact">The next move</a>
+  </nav>
+
+  <div class="mnav-foot">
+    <a class="mnav-cta" href="contact.html">Get in touch <i aria-hidden="true">&#8594;</i></a>
+    <a class="mnav-mail" href="mailto:info@yorilabs.com">info@yorilabs.com</a>
+  </div>
+</div>
+
+<main id="top">
+
+<!-- ── SectionHero ───────────────────────────────── -->
+<section class="hero" data-hero>
+
+  <div class="hero-rail">
+    <span class="rail-l">Yori Labs / AI Operations</span>
+    <span class="rail-line" aria-hidden="true"></span>
+    <span class="rail-n">01</span>
+    <span class="rail-r">Autonomous / Always-on</span>
+  </div>
+
+  <div class="hero-main">
+    <div class="hero-copy">
+      <h1 class="hero-h" data-lines>
+        <span><i>Turn</i></span>
+        <span><i>operations</i></span>
+        <span><i>into leverage.</i></span>
+      </h1>
+      <p class="hero-sub" data-reveal>Autonomous agents for sales, support,<br>social, and internal work.</p>
+      <div class="hero-actions" data-reveal>
+        <a class="btn-solid" href="#contact">Get started <i aria-hidden="true">&#8599;</i></a>
+        <a class="btn-text" href="#how">See the system</a>
+      </div>
+    </div>
+
+    <figure class="hero-fig">
+      <img src="assets/images/hero-conveyor.webp" alt="Four sorting lanes carrying proposals, packages, phones and planning cards into a single tray marked DONE" width="925" height="796">
+      <figcaption aria-hidden="true">
+        <span class="tag" style="--x:20.4%"><b>Sales</b></span>
+        <span class="tag" style="--x:42%"><b>Support</b></span>
+        <span class="tag" style="--x:63.5%"><b>Social</b></span>
+        <span class="tag" style="--x:86.7%"><b>Internal</b></span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hs"><span class="hs-n"><b data-count="1350">0</b>+</span><span class="hs-l">hrs / month</span></div>
+    <div class="hs"><span class="hs-n">24/7</span><span class="hs-l">always-on agents</span></div>
+    <div class="hs"><span class="hs-n">60&#8211;75%</span><span class="hs-l">cost savings</span></div>
+    <div class="hs wide"><span class="hs-note"><i class="dot"></i>Built for scale. Designed to compound.</span></div>
+  </div>
+
+</section>
+
+<!-- ── SectionFlow ─ how it works ────────────────────── -->
+<section class="flow" id="how">
+  <div class="flow-rail">
+    <span class="rail-l">Yori Labs / How it works</span>
+    <span class="rail-line" aria-hidden="true"></span>
+  </div>
+
+  <div class="flow-body">
+    <div class="flow-copy">
+      <h2 class="flow-h" data-lines>
+        <span><i>From work</i></span>
+        <span><i>to outcome.</i></span>
+      </h2>
+      <p class="flow-sub" data-reveal>Yori agents take in signals, understand the context, make decisions, and take action across your business, delivering real outcomes.</p>
+      <a class="btn-solid" href="#products" data-reveal>See it in action <i aria-hidden="true">&#8599;</i></a>
+    </div>
+
+    <div class="flow-track">
+      <figure class="flow-plate" data-reveal>
+        <img src="assets/images/s2-flow.webp" width="1178" height="486" loading="lazy"
+             alt="Five stages left to right: Input, a tray of lead intake forms; Context, an open notebook of customer data and rules; Decision, a phone showing an agent reasoning to a recommended action; Action, a tray of outbound email and CRM updates; Outcome, a tray holding a sheet marked DONE.">
+      </figure>
+      <div class="flow-caps">
+        <div class="fs-cap" style="--x:10.23%"><p>Leads, requests,<br>emails, tickets,<br>messages.</p></div>
+        <div class="fs-cap" style="--x:31.66%"><p>Customer data,<br>business rules,<br>history, signals.</p></div>
+        <div class="fs-cap" style="--x:51.19%"><p>AI agents reason<br>and determine<br>the best next step.</p></div>
+        <div class="fs-cap" style="--x:69.31%"><p>Replies, calls,<br>updates, posts,<br>workflows.</p></div>
+        <div class="fs-cap" style="--x:89.56%"><p>Resolved, booked,<br>published, delivered.<br>Real impact.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SectionLedger ─ sketch resolves into the built system ─── -->
+<section class="ledger" id="playbook">
+  <div class="ledger-inner">
+
+    <div class="ledger-rail">
+      <span class="rail-l">Yori Labs / The playbook</span>
+      <span class="rail-line" aria-hidden="true"></span>
+      <span class="rail-r"><b data-lstate>01 Closed</b></span>
+    </div>
+
+    <div class="ledger-grid">
+      <div class="ledger-copy">
+        <div class="lc-stack">
+
+          <div class="lc" data-lc="0">
+            <h2 class="ledger-h" data-lines>
+              <span><i>Four chapters.</i></span>
+              <span><i>One operation.</i></span>
+            </h2>
+            <p class="ledger-sub" data-reveal>Sales, support, social and internal work run on one stack. Drawn once, then built to run without you.</p>
+          </div>
+
+          <div class="lc" data-lc="1">
+            <h2 class="ledger-h">Every flow,<br>end to end.</h2>
+            <p class="ledger-sub">Four systems, one pattern: a signal arrives, the agent decides, it acts, the work closes.</p>
+            <ol class="lc-flows">
+              <li><span class="lf-n">01</span><span class="lf-t">Sales</span><span class="lf-c">Lead in &#8594; Qualify &#8594; Follow up &#8594; Book meeting</span></li>
+              <li><span class="lf-n">02</span><span class="lf-t">Support</span><span class="lf-c">Question &#8594; Search KB &#8594; Answer &#8594; Resolve</span></li>
+              <li><span class="lf-n">03</span><span class="lf-t">Social</span><span class="lf-c">Idea &#8594; Create &#8594; Post &#8594; Optimize</span></li>
+              <li><span class="lf-n">04</span><span class="lf-t">Internal</span><span class="lf-c">Trigger &#8594; Workflow &#8594; Execute &#8594; Complete</span></li>
+            </ol>
+          </div>
+
+        </div>
+
+      </div>
+
+      <figure class="ledger-plate">
+        <img class="lp" data-lp="0" src="assets/images/lb-closed.webp" width="1448" height="1086" loading="lazy"
+             alt="The Yori Labs notebook closed: a matte black cover embossed with the logo, a pen clipped to its spine, tested and scaled by 500+ businesses' AI automations">
+        <img class="lp" data-lp="1" src="assets/images/lb-open.webp" width="1448" height="1086" loading="lazy"
+             alt="The finished spread: Sales, Support, Social and Internal, each flowing from first signal to completed outcome">
+      </figure>
+    </div>
+
+  </div>
+  <div class="ledger-run" aria-hidden="true"></div>
+</section>
+
+<!-- ══ Deck ─ section 5 slides over section 4, slide-transition style ══ -->
+<div class="deck">
+  <div class="deck-pin">
+
+    <section class="custom" id="custom" data-deck="0">
+  <div class="custom-inner">
+
+    <div class="custom-rail">
+      <span class="rail-l">Yori Labs / Custom systems</span>
+    </div>
+
+    <div class="custom-grid">
+      <div class="custom-copy">
+        <h2 class="custom-h" data-lines>
+          <span><i>Built around</i></span>
+          <span><i>your business.</i></span>
+        </h2>
+        <p class="custom-sub" data-reveal>No two businesses run the same way.<br>We design AI systems around your<br>tools, data, people and processes.</p>
+        <ol class="custom-list">
+          <li>
+            <span class="cs-n">01</span>
+            <svg class="cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6 21 7.4v9.2L12 21.4 3 16.6V7.4Z"/><path d="M3 7.4 12 12l9-4.6M12 12v9.4"/></svg>
+            <span class="cs-t">Products</span>
+            <span class="cs-d">Custom apps &amp; AI products.</span>
+          </li>
+          <li>
+            <span class="cs-n">02</span>
+            <svg class="cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M9.3 20V4M14.7 20v-8M20 20v-5"/></svg>
+            <span class="cs-t">Dashboards</span>
+            <span class="cs-d">Business intelligence &amp; control.</span>
+          </li>
+          <li>
+            <span class="cs-n">03</span>
+            <svg class="cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.1 13.4a4.6 4.6 0 0 0 6.9.5l2.7-2.7a4.6 4.6 0 0 0-6.5-6.5l-1.6 1.5"/><path d="M13.9 10.6a4.6 4.6 0 0 0-6.9-.5l-2.7 2.7a4.6 4.6 0 0 0 6.5 6.5l1.5-1.5"/></svg>
+            <span class="cs-t">Integrations</span>
+            <span class="cs-d">AI inside your existing stack.</span>
+          </li>
+          <li>
+            <span class="cs-n">04</span>
+            <svg class="cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.1 14.6a1.5 1.5 0 0 0 .3 1.65l.05.06a1.82 1.82 0 1 1-2.57 2.57l-.06-.05a1.5 1.5 0 0 0-1.65-.3 1.5 1.5 0 0 0-.91 1.37v.15a1.82 1.82 0 1 1-3.64 0v-.08a1.5 1.5 0 0 0-.98-1.37 1.5 1.5 0 0 0-1.65.3l-.06.05a1.82 1.82 0 1 1-2.57-2.57l.05-.06a1.5 1.5 0 0 0 .3-1.65 1.5 1.5 0 0 0-1.37-.91h-.15a1.82 1.82 0 1 1 0-3.64h.08a1.5 1.5 0 0 0 1.37-.98 1.5 1.5 0 0 0-.3-1.65l-.05-.06a1.82 1.82 0 1 1 2.57-2.57l.06.05a1.5 1.5 0 0 01.65.3h.07a1.5 1.5 0 0 0 .91-1.37v-.15a1.82 1.82 0 1 1 3.64 0v.08a1.5 1.5 0 0 0 .91 1.37 1.5 1.5 0 0 01.65-.3l.06-.05a1.82 1.82 0 1 1 2.57 2.57l-.05.06a1.5 1.5 0 0 0-.3 1.65v.07a1.5 1.5 0 0 0 1.37.91h.15a1.82 1.82 0 1 1 03.64h-.08a1.5 1.5 0 0 0-1.37.91z"/></svg>
+            <span class="cs-t">Workflows</span>
+            <span class="cs-d">Custom automation from end to end.</span>
+          </li>
+        </ol>
+      </div>
+
+      <figure class="custom-fig" data-reveal>
+        <img src="assets/images/s4-stack.webp" width="1128" height="664" loading="lazy"
+             alt="A desk photographed from above: a pegboard wiring Your Business, Data, Tools, People and Processes into a black Yori Labs AI Layer unit, which routes out to Automate, Analyze, Scale and Grow, with an integrations checklist for Slack, Notion, Google Workspace, CRM, email, calendar, database and custom APIs">
+      </figure>
+    </div>
+
+    <div class="custom-foot">
+      <span>Your business. &nbsp;Your system. &nbsp;Your AI.</span>
+    </div>
+
+  </div>
+    </section>
+
+    <section class="brain" id="second-brain" data-deck="1">
+    <div class="brain-media" data-brain-media></div>
+
+    <div class="brain-rail">
+      <span class="br-n">05</span>
+      <span class="br-rule" aria-hidden="true"></span>
+      <span class="br-l">Yori Labs / Custom systems</span>
+    </div>
+
+    <div class="brain-copy">
+      <span class="br-eyebrow" data-b>05 / Second brain</span>
+      <h2 class="brain-h" data-lines>
+        <span><i>A brain</i></span>
+        <span><i>that remembers.</i></span>
+      </h2>
+      <p class="brain-sub" data-b>You learn. You create. You have ideas.<br>But you can&#8217;t remember everything.<br>We build your second brain, so nothing important<br>is ever lost, and you can do more, think clearer and<br>move faster.</p>
+      <a class="btn-solid brain-cta" href="#contact" data-b>Build Your Second Brain <i aria-hidden="true">&#8594;</i></a>
+    </div>
+
+    <div class="brain-foot" data-b>
+      <span class="bf-rule" aria-hidden="true"></span>
+      <span class="bf-t">Capture. &nbsp;Organise. &nbsp;Remember. &nbsp;Use.</span>
+    </div>
+    </section>
+
+  </div>
+</div>
+
+
+<!-- ── SectionProducts ────────────────────────────── -->
+<section class="products" id="products">
+  <div class="prod-inner">
+
+    <div class="prod-rail">
+      <span class="pr-n">06</span>
+      <span class="pr-rule" aria-hidden="true"></span>
+      <span class="pr-l">Yori Labs / Products</span>
+    </div>
+
+    <div class="prod-main">
+      <div class="prod-copy">
+        <h2 class="prod-h" data-lines>
+          <span><i>We don&#8217;t just</i></span>
+          <span><i>build systems.</i></span>
+          <span><i>We build products.</i></span>
+        </h2>
+        <p class="prod-sub" data-reveal>From trading to travel, communication to<br>business intelligence: real products, built with AI,<br>used by people, solving real problems.</p>
+      </div>
+
+      <ol class="prod-index" data-reveal>
+        <li>Ideas</li>
+        <li>Products</li>
+        <li>People</li>
+        <li>Impact</li>
+        <li class="pi-rule" aria-hidden="true"></li>
+      </ol>
+    </div>
+
+    <ol class="prod-row">
+        <li data-p>
+          <svg class="pr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2.9H7.4a2 2 0 0 0-2 2v14.2a2 2 0 0 0 2 2h9.2a2 2 0 0 0 2-2V7.6Z"/><path d="M14 2.9v4.7h4.6"/><path d="M9 13.4h6M9 17h4"/></svg>
+          <span class="pr-t">Site-Mirror</span>
+          <span class="pr-k">Website cloner</span>
+        </li>
+        <li data-p>
+          <svg class="pr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20v-5M9.7 20V7M14.3 20v-9M19 20v-3"/></svg>
+          <span class="pr-t">BidYori</span>
+          <span class="pr-k">Trading</span>
+        </li>
+        <li data-p>
+          <svg class="pr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.2a7.4 7.4 0 0 1-7.9 7.4 8.5 8.5 0 0 1-2.6-.4L4.6 20.9l1.6-4.1a7.1 7.1 0 0 1-1.6-4.6 7.4 7.4 0 0 1 7.9-7.4 7.4 7.4 0 0 1 7.9 7.4Z"/></svg>
+          <span class="pr-t">Linkliteral</span>
+          <span class="pr-k">Translation</span>
+        </li>
+        <li data-p>
+          <svg class="pr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a.5.5 0 0 0-.5.8l3.9 4.1-2.6 2.6-2.4-.6a.5.5 0 0 0-.5.8l2.2 2.2 2.2 2.2a.5.5 0 0 0 .8-.5l-.6-2.4 2.6-2.6 4.1 3.9a.5.5 0 0 0 .8-.5Z"/></svg>
+          <span class="pr-t">YoriTrip</span>
+          <span class="pr-k">Travel</span>
+        </li>
+        <li data-p>
+          <svg class="pr-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.6" y="3.6" width="7" height="7" rx="1.1"/><rect x="13.4" y="3.6" width="7" height="7" rx="1.1"/><rect x="3.6" y="13.4" width="7" height="7" rx="1.1"/><rect x="13.4" y="13.4" width="7" height="7" rx="1.1"/></svg>
+          <span class="pr-t">Yori Agentic<br>Dashboard</span>
+          <span class="pr-k">Business</span>
+        </li>
+    </ol>
+
+    <div class="prod-foot" data-reveal>
+      <span>Real products. &nbsp;Real people. &nbsp;A more capable tomorrow.</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ Product deck ─ only the components move; the ground never does ══ -->
+<div class="pdeck" id="productdeck">
+  <div class="pdeck-pin">
+
+    <div class="pslide" data-pslide="0" id="sitemirror">
+      <div class="p1-inner">
+        <div class="p1-grid">
+          <div class="p1-copy">
+            <div class="p1-rail">
+              <span class="pr-n">06</span>
+              <span class="pr-rule" aria-hidden="true"></span>
+              <span class="pr-l">Product 01</span>
+            </div>
+
+            <h2 class="p1-h"><span><i>Site-Mirror</i></span></h2>
+            <p class="p1-kind">AI website cloner</p>
+
+            <p class="p1-sub">Clone any website into a clean, editable,<br>production ready version. Fast, accurate,<br>and powered by AI.</p>
+
+            <span class="p1-line" aria-hidden="true"></span>
+
+            <ol class="p1-stats">
+              <li><span class="p1-s-t">Fast</span><span class="p1-s-k">Clone websites</span></li>
+              <li><span class="p1-s-t">Accurate</span><span class="p1-s-k">Preserve design</span></li>
+              <li><span class="p1-s-t">Editable</span><span class="p1-s-k">Production ready</span></li>
+            </ol>
+
+            <a class="btn-solid p1-cta" href="#contact">Explore Site-Mirror <i aria-hidden="true">&#8594;</i></a>
+          </div>
+
+          <div class="p1-stage">
+            <figure class="p1-card" data-pcard="0">
+              <img src="assets/images/p1-sitemirror.webp" width="1896" height="980" loading="lazy"
+                   alt="The Site-Mirror landing page: save any page, every layer of it, beside a laptop showing the capture panel mid clone">
+            </figure>
+          </div>
+        </div>
+
+        <div class="p1-foot"><span>Same look. &nbsp;New possibilities.</span></div>
+      </div>
+    </div>
+
+    <div class="pslide" data-pslide="1" id="bidyori">
+      <div class="p1-inner">
+        <div class="p1-grid">
+          <div class="p1-copy">
+            <div class="p1-rail">
+              <span class="pr-n">06</span>
+              <span class="pr-rule" aria-hidden="true"></span>
+              <span class="pr-l">Product 02</span>
+            </div>
+
+            <h2 class="p1-h"><span><i>BidYori</i></span></h2>
+            <p class="p1-kind">AI-powered trading</p>
+
+            <p class="p1-sub">Real-time market insights.<br>Smarter trades. Less noise.<br>Built for a faster, clearer edge.</p>
+
+            <span class="p1-line" aria-hidden="true"></span>
+
+            <ol class="p1-stats">
+              <li><span class="p1-s-t">Real-time</span><span class="p1-s-k">Market data</span></li>
+              <li><span class="p1-s-t">AI</span><span class="p1-s-k">Signals</span></li>
+              <li><span class="p1-s-t">Smart</span><span class="p1-s-k">Strategies</span></li>
+            </ol>
+
+            <a class="btn-solid p1-cta" href="#contact">Explore BidYori <i aria-hidden="true">&#8594;</i></a>
+          </div>
+
+          <div class="p1-stage">
+            <figure class="p1-card" data-pcard="1">
+              <img src="assets/images/p2-bidyori.webp" width="1897" height="1076" loading="lazy"
+                   alt="The BidYori dashboard: total budget, conversions, average CPA and ROI shown as live tiles above a campaign health bar">
+            </figure>
+          </div>
+        </div>
+
+        <div class="p1-foot"><span>Trade smarter. &nbsp;With AI.</span></div>
+      </div>
+    </div>
+
+    <div class="pslide" data-pslide="2" id="linkliteral">
+      <div class="p1-inner">
+        <div class="p1-grid">
+          <div class="p1-copy">
+            <div class="p1-rail">
+              <span class="pr-n">06</span>
+              <span class="pr-rule" aria-hidden="true"></span>
+              <span class="pr-l">Product 03</span>
+            </div>
+
+            <h2 class="p1-h"><span><i>Linkliteral</i></span></h2>
+            <p class="p1-kind">LinkedIn live chat translator</p>
+
+            <p class="p1-sub">Break language barriers while you network.<br>Linkliteral translates LinkedIn conversations in<br>real time, helping you communicate naturally<br>with people anywhere in the world.</p>
+
+            <span class="p1-line" aria-hidden="true"></span>
+
+            <ol class="p1-stats">
+              <li><span class="p1-s-t">Real-time</span><span class="p1-s-k">Translation</span></li>
+              <li><span class="p1-s-t">Global</span><span class="p1-s-k">Communication</span></li>
+              <li><span class="p1-s-t">LinkedIn</span><span class="p1-s-k">Integration</span></li>
+            </ol>
+
+            <a class="btn-solid p1-cta" href="#contact">Explore Linkliteral <i aria-hidden="true">&#8594;</i></a>
+          </div>
+
+          <div class="p1-stage">
+            <figure class="p1-card" data-pcard="2">
+              <img src="assets/images/p3-linkliteral.webp" width="1896" height="980" loading="lazy"
+                   alt="The Linkliteral mark: a LinkedIn speech bubble paired with a translation bubble, beside the wordmark">
+            </figure>
+          </div>
+        </div>
+
+        <div class="p1-foot"><span>Connect without language barriers.</span></div>
+      </div>
+    </div>
+
+    <div class="pslide" data-pslide="3" id="yoritrip">
+      <div class="p1-inner">
+        <div class="p1-grid">
+          <div class="p1-copy">
+            <div class="p1-rail">
+              <span class="pr-n">06</span>
+              <span class="pr-rule" aria-hidden="true"></span>
+              <span class="pr-l">Product 04</span>
+            </div>
+
+            <h2 class="p1-h"><span><i>YoriTrip</i></span></h2>
+            <p class="p1-kind">AI travel planner</p>
+
+            <p class="p1-sub">Turn ideas into perfect itineraries.<br>Personalised travel plans in seconds.<br>Less planning. More exploring.</p>
+
+            <span class="p1-line" aria-hidden="true"></span>
+
+            <ol class="p1-stats">
+              <li><span class="p1-s-t">1,000+</span><span class="p1-s-k">Users / day</span></li>
+              <li><span class="p1-s-t">AI</span><span class="p1-s-k">Itineraries</span></li>
+              <li><span class="p1-s-t">Global</span><span class="p1-s-k">Destinations</span></li>
+            </ol>
+
+            <a class="btn-solid p1-cta" href="https://itinerary-ingenue.lovable.app/" target="_blank" rel="noopener">Explore YoriTrip <i aria-hidden="true">&#8594;</i></a>
+          </div>
+
+          <div class="p1-stage">
+            <figure class="p1-card" data-pcard="3">
+              <img src="assets/images/p4-yoritrip.webp" width="1917" height="991" loading="lazy"
+                   alt="The YoriTrip planner: from, to, dates, travellers, budget and style, above a free-text brief and a Generate AI Itinerary button">
+            </figure>
+          </div>
+        </div>
+
+        <div class="p1-foot"><span>Plan less. &nbsp;Travel more.</span></div>
+      </div>
+    </div>
+
+    <div class="pslide" data-pslide="4" id="agentic-dashboard">
+      <div class="p1-inner">
+        <div class="p1-grid">
+          <div class="p1-copy">
+            <div class="p1-rail">
+              <span class="pr-n">06</span>
+              <span class="pr-rule" aria-hidden="true"></span>
+              <span class="pr-l">Product 05</span>
+            </div>
+
+            <h2 class="p1-h"><span><i>Yori Agentic</i></span><span><i>Dashboard</i></span></h2>
+            <p class="p1-kind">AI business operations dashboard</p>
+
+            <p class="p1-sub">One command center for your people, leads, and<br>AI workforce. Track employees, manage leads,<br>monitor AI agents, and understand your operations<br>from a single intelligent dashboard.</p>
+
+            <span class="p1-line" aria-hidden="true"></span>
+
+            <ol class="p1-stats">
+              <li><span class="p1-s-t">Employees</span><span class="p1-s-k">Management</span></li>
+              <li><span class="p1-s-t">Leads</span><span class="p1-s-k">Pipeline</span></li>
+              <li><span class="p1-s-t">AI</span><span class="p1-s-k">Operations</span></li>
+            </ol>
+
+            <a class="btn-solid p1-cta" href="#contact">Explore the Dashboard <i aria-hidden="true">&#8594;</i></a>
+          </div>
+
+          <div class="p1-stage">
+            <figure class="p1-card" data-pcard="4">
+              <img src="assets/images/p5-yoriagentic.webp" width="1896" height="980" loading="lazy"
+                   alt="The Yori Labs Agentic Dashboard mark: the Yori Labs arrow monogram above the words Agentic Dashboard">
+            </figure>
+          </div>
+        </div>
+
+        <div class="p1-foot"><span>See everything. &nbsp;Control anything.</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ── Closing CTA ─────────────────────────────────────────── -->
+<!-- ══ Outro ─ the mark floods, opens, and hands over to the last word ══ -->
+<div class="outro" id="outro">
+  <div class="outro-pin">
+
+    <!-- ── SectionNext ─ 07 ──────────────────────────────────── -->
+    <section class="nx" id="contact">
+      <div class="nx-inner">
+
+        <div class="nx-top">
+          <div class="nx-rail" data-nx>
+            <span class="pr-n">07</span>
+            <span class="pr-rule" aria-hidden="true"></span>
+            <span class="pr-l">The next move</span>
+          </div>
+          <div class="nx-brand">
+            <img class="nx-mark" src="assets/brand/yorilabsailogo-ink.png"
+                 width="1664" height="782" alt="yorilabs.ai">
+            <div class="nx-note" data-nx>
+              <i class="pr-rule" aria-hidden="true"></i>
+              <span>AI systems<br>Real outcomes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nx-main">
+          <div class="nx-copy">
+            <h2 class="nx-h" data-nx-lines>
+              <span><i>From ideas to</i></span>
+              <span><i class="nx-blue">Real impact.</i></span>
+            </h2>
+
+            <p class="nx-sub" data-nx>Let&#8217;s build, automate, and scale<br>what&#8217;s next, together.</p>
+
+            <div class="nx-actions" data-nx>
+              <a class="nx-cta" href="contact.html">Start with Yori <i aria-hidden="true">&#8599;</i></a>
+              <span class="nx-sep" aria-hidden="true"></span>
+              <a class="nx-link" href="contact.html">Book a call</a>
+            </div>
+          </div>
+
+          <figure class="nx-fig" data-nx>
+            <img src="assets/images/s7-harness.webp" width="1056" height="789" loading="lazy"
+                 alt="The Yori harness: a lit core wired out to sales, research, support, social, ops, build and insights agents, each bank feeding the tools it works with">
+          </figure>
+        </div>
+
+        <div class="nx-foot" data-nx>
+          <span class="nx-f-l"><b>Yori Labs</b><i class="pr-rule" aria-hidden="true"></i>AI operations</span>
+          <ol class="nx-f-r">
+            <li>Businesses</li>
+            <li>Agents</li>
+            <li>Automations</li>
+            <li>Real outcomes</li>
+          </ol>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</main>
+
+<!-- the outro: the camera starts inside the disc in the O, so the screen
+     is nothing but that blue, then pulls back until the whole mark stands
+     on the paper and walks to the corner of 07. It is one painted layer,
+     sized and placed by app.js, because a transform big enough to fill a
+     screen from a 45px disc would blow past the compositor's texture cap. -->
+<div class="outro-field" aria-hidden="true">
+  <div class="outro-mark"></div>
+</div>
+
+<!-- ── BaseFooter ─ 08, the index ──────────────────────────── -->
+<footer class="ftr" id="index">
+  <div class="ftr-inner">
+
+    <div class="ftr-top">
+      <div class="ftr-brand">
+        <img class="ftr-mark" src="assets/brand/yorilabsailogo-ink.png"
+             width="1664" height="782" alt="yorilabs.ai">
+        <p class="ftr-tag">AI systems.<br>Real outcomes.</p>
+      </div>
+      <div class="ftr-rail">
+        <span class="pr-n">08</span>
+        <span class="pr-rule" aria-hidden="true"></span>
+        <span class="pr-l">Yori Labs / Index</span>
+      </div>
+    </div>
+
+    <div class="ftr-body">
+
+      <div class="ftr-say">
+        <span class="ftr-eye">Built for what&#8217;s next<i class="pr-rule" aria-hidden="true"></i></span>
+        <h2 class="ftr-h">
+          <span>We don&#8217;t replace</span>
+          <span>people blindly.</span>
+          <span>We replace</span>
+          <span class="ftr-blue">inefficiency intelligently.</span>
+        </h2>
+        <p class="ftr-sub">AI systems for ambitious businesses.<br>From ideas to execution, we make it real.</p>
+        <div class="ftr-actions">
+          <a class="ftr-cta" href="contact.html">Get in touch <i aria-hidden="true">&#8594;</i></a>
+          <span class="ftr-sep" aria-hidden="true"></span>
+          <a class="ftr-link" href="contact.html">Book a call</a>
+        </div>
+      </div>
+
+      <nav class="ftr-nav" aria-label="Footer">
+
+        <div class="ftr-col">
+          <span class="ftr-h6">Sections</span>
+          <a href="#top">Home</a>
+          <a href="#how">How it works</a>
+          <a href="#playbook">Playbook</a>
+          <a href="#second-brain">Second brain</a>
+          <a href="#products">Products</a>
+          <a href="#contact">The next move</a>
+        </div>
+
+        <div class="ftr-col">
+          <span class="ftr-h6">Products</span>
+          <a href="#productdeck" data-product="0"><b>Site-Mirror</b><i>AI website cloner</i></a>
+          <a href="#productdeck" data-product="1"><b>BidYori</b><i>AI-powered trading</i></a>
+          <a href="#productdeck" data-product="2"><b>Linkliteral</b><i>LinkedIn chat translator</i></a>
+          <a href="#productdeck" data-product="3"><b>YoriTrip</b><i>AI travel planner</i></a>
+          <a href="#productdeck" data-product="4"><b>Yori Agentic Dashboard</b><i>AI business operations</i></a>
+        </div>
+
+        <div class="ftr-col">
+          <span class="ftr-h6">Live now</span>
+          <a href="https://itinerary-ingenue.lovable.app/" target="_blank" rel="noopener">
+            <b>Ingenue <i class="ftr-out" aria-hidden="true">&#8599;</i></b><i>Travel planner, 1,000+ a day</i></a>
+          <a href="mailto:info@yorilabs.com"><b>info@yorilabs.com</b><i>Talk to a person</i></a>
+        </div>
+
+        <div class="ftr-col ftr-loop">
+          <span class="ftr-h6">Stay in the loop</span>
+          <p>New builds, and what we learn making them.</p>
+          <form class="ftr-form" data-subscribe>
+            <input type="email" name="email" required autocomplete="email"
+                   placeholder="Your email" aria-label="Your email address">
+            <button type="submit" aria-label="Subscribe"><i aria-hidden="true">&#8594;</i></button>
+          </form>
+          <span class="ftr-fine" data-subscribe-note>No spam. Only signal.</span>
+        </div>
+
+      </nav>
+    </div>
+
+    <div class="ftr-base">
+      <span class="ftr-cr">&copy; 2026 Yori Labs. All rights reserved.</span>
+      <!-- social: add the real profile URLs as href on each anchor to activate -->
+      <ul class="ftr-social">
+        <li><a data-social="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 9H3.4v11.6h2.8Zm.2-3.1a1.6 1.6 0 1 0-3.2 0 1.6 1.6 0 0 0 3.2 0ZM20.6 14c0-3.3-1.8-4.9-4.1-4.9a3.6 3.6 0 0 0-3.2 1.7V9H10.5v11.6h2.8v-6.2c0-1.6.9-2.4 2-2.4s1.9.8 1.9 2.4v6.2h2.8Z"/></svg></a></li>
+        <li><a data-social="X" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 3h3.4l-7.5 8.6L22 21h-6.4l-4.4-5.8L6 21H2.6l8-9.2L2.3 3h6.6l4 5.3Zm-1.2 16h1.9L7.6 4.9H5.6Z"/></svg></a></li>
+        <li><a data-social="YouTube" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.1V8.9l5.2 3.1Z"/></svg></a></li>
+        <li><a data-social="Instagram" aria-label="Instagram"><svg class="is-stroke" viewBox="0 0 24 24" stroke-width="1.7" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a></li>
+      </ul>
+      <span class="ftr-ops">AI operations<br>for ambitious businesses.</span>
+    </div>
+
+    <div class="ftr-strip">
+      <span class="ftr-eq">People <b>+</b> Systems <b>=</b> <em>Leverage</em></span>
+      <span class="pr-rule" aria-hidden="true"></span>
+      <span class="ftr-est">Yori Labs / Est. 2024</span>
+    </div>
+
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/4.5.0/anime.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

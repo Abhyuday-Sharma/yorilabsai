@@ -1,0 +1,1735 @@
+/* ══════════════════════════════════════════════════════════
+   yorilabs.ai — flagship
+   Dark-first. Near-monochrome, one signal accent.
+   Motion architecture ported from the Kononenko reference:
+   Lenis scroll · GSAP ScrollTrigger · pinned stages.
+   ══════════════════════════════════════════════════════════ */
+
+:root{
+  color-scheme:dark;
+
+  --bg:#141a1e;
+  --bg-2:#1a2126;
+  --surface:#1d252a;
+  --elev:#242d33;
+  --ink:#f2f5f6;
+  --muted:#9dabb1;
+  --faint:#74838a;
+  --rule:#313c43;
+  --rule-soft:#252e34;
+  --accent:#3d86ff;        /* lifted brand blue — legible as small text on near-black */
+  --accent-solid:#0069f9;  /* the mark's exact blue — fills, bars, selection */
+  --brand-blue:#006cf8;    /* the disc inside the O, sampled off the logo file */
+  --accent-dim:#2a5ea8;
+
+  --f-cond:"Antonio","Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+
+  --pad:clamp(20px,4.4vw,68px);
+  --gut:clamp(28px,4vw,56px);
+  --sec:clamp(62px,8.5vh,118px);
+  --max:1440px;
+
+  /* hero frame, sampled from herosection.png */
+  --paper:#efe9e6;
+  --paper-ink:#111417;
+  --paper-rule:#d3ccc7;
+  --paper-mute:#6d6862;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  font-weight:300;          /* brand body weight */
+  letter-spacing:.01em;     /* brand tracking, 1% */
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none;margin:0;padding:0}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.028em;line-height:.95;text-wrap:balance}
+p{margin:0;font-weight:300;letter-spacing:.01em}
+::selection{background:var(--accent-solid);color:#fff}
+
+/* ── shared atoms ─────────────────────────────────────────── */
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ── reveal primitives (only armed when JS is present) ────── */
+.js [data-lines] span{display:block;overflow:hidden}
+.js [data-lines] span i{display:block;font-style:normal;transform:translateY(102%)}
+.js .hero-fig img,.js .flow-plate img{opacity:0}
+.js [data-reveal]{opacity:0;transform:translateY(22px)}
+.js [data-row]{opacity:0;transform:translateY(16px)}
+.js [data-card]{opacity:0;transform:translateY(30px)}
+.js .custom-list li{opacity:0;transform:translateY(22px);transform-origin:left center}
+.js .prod-row li{opacity:0;transform:translateY(24px)}
+
+/* ── BasePreloader ────────────────────────────────────────── */
+.preloader{
+  position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:var(--pad);
+}
+.pre-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.pre-logo{
+  width:clamp(168px,26vw,340px);height:auto;
+  opacity:.96;
+}
+.pre-count{
+  font-family:var(--f-mono);font-size:clamp(30px,7vw,74px);line-height:.9;
+  font-variant-numeric:tabular-nums;color:var(--faint);
+}
+.pre-bar{margin-top:20px;height:1px;background:var(--rule);position:relative;overflow:hidden}
+.pre-bar i{position:absolute;inset:0 100% 0 0;background:var(--ink);display:block}
+body.loaded .preloader{pointer-events:none}
+
+/* ── BaseIndicator ────────────────────────────────────────── */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:120;background:transparent}
+.progress i{display:block;height:100%;width:0;background:var(--accent-solid)}
+
+/* ════════════════════════════════════════════════════════
+   HEADER + HERO ─ built to herosection.png
+   1535×1024 mockup: header rule 9.6%, stat rule 87.5%,
+   vertical split 39.7%, panel #efe9e6.
+   ════════════════════════════════════════════════════════ */
+.hdr{
+  position:relative;z-index:100;
+  display:grid;grid-template-columns:39.7% 1fr auto;align-items:stretch;
+  min-height:clamp(58px,9.6vh,98px);
+  background:var(--paper);color:var(--paper-ink);
+  border-bottom:1px solid var(--paper-rule);
+}
+.hdr-mark{
+  display:flex;align-items:center;
+  padding:0 clamp(18px,3vw,44px);
+  border-right:1px solid var(--paper-rule);
+}
+.hdr-mark img{width:clamp(112px,9.5vw,168px);height:auto;transition:opacity .22s}
+.hdr-mark:hover img{opacity:.6}
+.hdr-nav{
+  display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;
+  gap:clamp(16px,2.6vw,46px);padding:clamp(14px,2vw,22px) clamp(18px,3vw,40px);
+}
+.hdr-nav a{
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-ink);
+  display:inline-flex;align-items:center;gap:6px;transition:opacity .22s;
+}
+.hdr-nav a:hover{opacity:.5}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--accent-solid);display:inline-block;flex:none}
+.hdr-menu{
+  width:clamp(56px,5vw,78px);border:0;background:#000;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.hdr-menu span{display:block;width:20px;height:1.5px;background:#fff}
+.hdr-menu:focus-visible{outline:2px solid var(--accent-solid);outline-offset:-4px}
+
+.hero{
+  position:relative;background:var(--paper);color:var(--paper-ink);
+  /* explicit rows: rail / main / stats. header + hero fill one screen. */
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  height:calc(100svh - clamp(58px,9.6vh,98px));
+  min-height:640px;overflow:hidden;
+  border-bottom:0;
+}
+.hero::after{content:none}
+
+/* rail ─ the thin label row under the header */
+.hero-rail{
+  flex:none;
+  display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;
+  gap:clamp(12px,2vw,26px);
+  padding:clamp(14px,2.2vw,26px) clamp(18px,3vw,44px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+}
+.rail-line{height:1px;background:var(--accent-solid);opacity:.85;min-width:40px}
+.rail-n{color:var(--paper-ink);padding-right:clamp(20px,8vw,140px)}
+.rail-r{margin-left:auto;color:var(--paper-mute)}
+
+/* main ─ copy left, photograph right, split on the mockup's 39.7% */
+.hero-main{display:grid;grid-template-columns:39.7% 1fr;align-items:stretch;min-height:0}
+.hero-copy{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;min-height:0;
+  padding:clamp(18px,3vh,44px) clamp(18px,3vw,44px) clamp(22px,3.4vh,48px);
+  gap:0;
+  border-right:1px solid var(--paper-rule);
+}
+.hero-h{
+  position:relative;z-index:2;pointer-events:none;
+  font-family:var(--f-cond);font-weight:600;
+  font-size:clamp(42px,min(8.9vw,15.2vh),140px);line-height:.9;
+  letter-spacing:-.005em;text-transform:uppercase;
+  margin:0 0 clamp(18px,2.6vh,32px);white-space:nowrap;
+}
+.hero-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;
+  width:max-content;max-width:none}   /* max-content so the clip box never cuts the line short */
+.hero-sub{
+  font-size:clamp(14px,1.15vw,17px);line-height:1.5;color:#2c3236;
+  margin:0 0 clamp(18px,2.8vh,34px);
+}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(16px,2.4vw,34px)}
+.btn-solid{
+  display:inline-flex;align-items:center;gap:14px;
+  background:#000;color:#fff;padding:15px 22px;
+  font-size:clamp(13px,1.05vw,15px);font-weight:500;
+  transition:background .25s;
+}
+.btn-solid i{font-style:normal;font-size:1.05em}
+.btn-solid:hover{background:var(--accent-solid)}
+.btn-text{
+  font-size:clamp(13px,1.05vw,15px);color:var(--paper-ink);
+  border-bottom:1px solid currentColor;padding-bottom:2px;transition:opacity .22s;
+}
+.btn-text:hover{opacity:.55}
+
+.hero-fig{
+  --band:clamp(54px,13.4vh,140px);
+  position:relative;z-index:1;margin:0;overflow:hidden;
+  display:grid;grid-template-rows:var(--band) minmax(0,1fr);
+  background:var(--paper);
+}
+.hero-fig img{
+  grid-row:2;width:100%;height:100%;display:block;
+  object-fit:cover;object-position:center bottom;
+  filter:saturate(.9) contrast(1.03);
+}
+/* warm paper tint over the photograph so it belongs to the panel
+   instead of sitting on it. Heaviest where the leader lines enter. */
+.hero-fig::after{
+  content:"";position:absolute;left:0;right:0;top:var(--band);bottom:0;
+  z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(239,233,230,.52) 0%,
+    rgba(239,233,230,.16) 14%,
+    rgba(239,233,230,.07) 46%,
+    rgba(239,233,230,.10) 100%);
+}
+.hero-fig figcaption{position:absolute;inset:0;z-index:2;pointer-events:none}
+.tag{
+  position:absolute;left:var(--x);
+  transform:translateX(-50%);          /* positioning only - never animated */
+  top:calc(var(--band) - 2.75em);
+  display:flex;flex-direction:column;align-items:center;gap:0;
+}
+.tag b{
+  font-family:var(--f-mono);font-weight:400;font-size:clamp(8.5px,.72vw,10.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);white-space:nowrap;
+}
+.tag{--rule:1}
+.tag::after{
+  content:"";width:1px;height:clamp(30px,6.6vh,66px);
+  background:var(--paper-ink);opacity:.42;margin-top:9px;
+  transform:scaleY(var(--rule));transform-origin:top center;
+}
+
+/* stat band along the foot */
+.hero-stats{
+  flex:none;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.35fr);
+  border-top:1px solid var(--paper-rule);
+}
+.hs{
+  display:flex;align-items:baseline;gap:clamp(9px,1vw,16px);
+  min-height:clamp(74px,11vh,116px);
+  padding:clamp(16px,2vw,26px) clamp(14px,2.1vw,32px);
+  border-right:1px solid var(--paper-rule);
+  white-space:nowrap;overflow:hidden;
+}
+.hs:last-child{border-right:0}
+.hs-n{
+  flex:none;white-space:nowrap;
+  font-family:var(--f-disp);font-weight:600;color:var(--accent-solid);
+  font-size:clamp(19px,2.1vw,32px);letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+}
+.hs-l,.hs-note{
+  flex:none;white-space:nowrap;
+  font-family:var(--f-mono);font-size:clamp(8.5px,.7vw,10.5px);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--paper-mute);
+}
+.hs-note{display:inline-flex;align-items:center;gap:10px;color:var(--paper-ink)}
+.hs.wide{justify-content:flex-start}
+.hs.wide::before{
+  /* a zero-width strut carrying the figure's metrics, so this cell's
+     baseline matches the three that do have a number in them */
+  content:"\0000a0";display:inline-block;width:0;overflow:hidden;
+  font-family:var(--f-disp);font-weight:600;
+  font-size:clamp(19px,2.1vw,32px);
+}
+
+@media (max-width:900px){
+  .hdr{grid-template-columns:1fr auto}
+  .hdr-nav{display:none}
+  .hero-main{grid-template-columns:1fr}
+  .hero-copy{border-right:0;border-bottom:1px solid var(--paper-rule)}
+  .hero-h{white-space:normal;font-size:clamp(40px,11vw,80px)}
+  .hero{height:auto;min-height:auto;grid-template-rows:auto auto auto}
+  .hero-fig{min-height:52vh}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .hs{border-bottom:1px solid var(--paper-rule)}
+  .hs.wide{grid-column:1 / -1}
+  .rail-r,.rail-n{display:none}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionFlow ─ built to section2.jpg
+   Continuous with the hero: same paper, no dividing rule.
+   ════════════════════════════════════════════════════════ */
+.flow{
+  background:var(--paper);color:var(--paper-ink);
+  padding:clamp(48px,8vh,104px) 0 clamp(56px,10vh,128px);
+}
+.flow-rail{
+  display:flex;align-items:center;gap:clamp(12px,1.6vw,20px);
+  padding:0 clamp(18px,3vw,44px) clamp(34px,5vh,64px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+}
+.flow-rail .rail-line{max-width:26px;flex:none}
+
+.flow-body{
+  display:grid;grid-template-columns:minmax(0,.30fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,64px);align-items:start;
+  padding:0 clamp(18px,3vw,44px);
+}
+.flow-copy{display:flex;flex-direction:column;align-items:flex-start}
+.flow-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(34px,4.2vw,66px);line-height:.92;letter-spacing:-.005em;
+  margin:0 0 clamp(18px,2.4vw,30px);
+}
+.flow-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content}
+.flow-sub{
+  font-size:clamp(14px,1.05vw,16px);line-height:1.62;color:#2c3236;
+  max-width:34ch;margin:0 0 clamp(26px,3.4vw,44px);
+}
+
+/* the five stages: one plate, real captions beneath it */
+.flow-track{display:flex;flex-direction:column}
+.flow-plate{margin:0}
+.flow-plate img{width:100%;height:auto;display:block}
+.flow-caps{
+  position:relative;height:clamp(66px,9vh,86px);
+  margin-top:clamp(14px,2vh,26px);
+}
+.fs-cap{
+  position:absolute;top:0;left:var(--x);
+  transform:translateX(-50%);          /* positioning only - never animated */
+  width:max-content;max-width:22ch;
+}
+.fs-cap p{
+  margin:0;text-align:center;
+  font-size:clamp(11.5px,.9vw,14.5px);line-height:1.62;color:#2c3236;
+}
+
+@media (max-width:1100px){
+  .flow-body{grid-template-columns:1fr;gap:36px}
+  .flow-caps{height:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:0 10px;margin-top:14px}
+  .fs-cap{position:static;transform:none;left:auto;max-width:none;font-size:11px}
+}
+@media (max-width:620px){
+  .flow-caps{grid-template-columns:repeat(2,1fr);gap:16px 12px;text-align:left}
+  .fs-cap{text-align:left}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionLedger ─ closed → sketch → built, cross-dissolved on scroll.
+   The sketch and the photograph are registered to within a pixel at
+   the spine, so the middle transition resolves rather than swaps.
+   ════════════════════════════════════════════════════════ */
+.ledger{position:relative;background:var(--paper);color:var(--paper-ink)}
+.ledger-inner{
+  position:sticky;top:0;height:100svh;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(60px,9vh,110px) clamp(18px,3vw,44px) clamp(40px,7vh,80px);
+  max-width:var(--max);margin:0 auto;
+}
+.ledger-run{height:205vh}   /* 2 dwells + 1 dissolve, inset 0.88 */
+
+.ledger-rail{
+  display:flex;align-items:center;gap:clamp(12px,1.6vw,22px);
+  padding-bottom:clamp(22px,4vh,48px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+}
+.ledger-rail .rail-line{flex:1;max-width:none}
+.ledger-rail .rail-r{flex:none;min-width:9ch;text-align:right}
+.ledger-rail .rail-r b{font-weight:400;color:var(--paper-ink);transition:opacity .3s}
+
+.ledger-grid{
+  display:grid;grid-template-columns:minmax(0,.34fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,66px);align-items:center;flex:1;min-height:0;
+}
+.ledger-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.ledger-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(28px,3.4vw,54px);line-height:.94;letter-spacing:-.005em;margin:0;
+}
+.ledger-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content}
+.ledger-sub{
+  font-size:clamp(13.5px,1vw,15.5px);line-height:1.62;color:#2c3236;
+  max-width:32ch;margin:clamp(16px,2.2vh,26px) 0 clamp(24px,3.4vh,40px);
+}
+
+
+/* the copy column carries two states, stacked and cross-faded with the plates */
+.lc-stack{display:grid;width:100%}
+.lc{grid-area:1/1;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.lc-flows{
+  display:flex;flex-direction:column;gap:0;width:100%;max-width:34ch;
+  border-top:1px solid var(--paper-rule);margin:0;
+}
+.lc-flows li{
+  display:grid;grid-template-columns:28px 1fr;gap:3px 12px;
+  padding:clamp(9px,1.4vh,14px) 0;border-bottom:1px solid var(--paper-rule);
+}
+.lf-n{font-family:var(--f-mono);font-size:10.5px;color:var(--paper-mute);grid-row:span 2;padding-top:3px}
+.lf-t{font-family:var(--f-disp);font-weight:600;font-size:14px;letter-spacing:-.01em}
+.lf-c{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.02em;color:var(--paper-mute);line-height:1.5}
+
+.ledger-plate{
+  position:relative;margin:0;width:100%;
+  aspect-ratio:1448/1086;max-height:100%;
+  justify-self:center;align-self:center;
+}
+.lp{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;display:block;
+  will-change:opacity,transform;
+}
+
+@media (max-width:1000px){
+  .ledger-inner{height:auto;position:static;padding-top:clamp(48px,8vh,80px)}
+  .ledger-run{display:none}
+  .ledger-grid{grid-template-columns:1fr;gap:30px}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionCustom ─ built to section4.png
+   1689×931 mockup: photo spans 33.2%→100% and bleeds off the
+   right edge; foot rule at 88.8%. No rail line, no state label.
+   ════════════════════════════════════════════════════════ */
+.custom{
+  --cpad:clamp(18px,3.8vw,64px);
+  position:relative;background:var(--paper);color:var(--paper-ink);overflow:hidden;
+}
+.deck-pin > .custom .custom-foot{margin-top:clamp(20px,3vh,38px)}
+.custom-inner{
+  /* full bleed: the photograph runs to the right viewport edge, as in the mockup */
+  max-width:none;margin:0;
+  padding:clamp(56px,9vh,104px) 0 clamp(34px,5vh,58px) var(--cpad);
+}
+
+.custom-rail{
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+  padding-bottom:clamp(24px,4.5vh,54px);
+}
+
+.custom-grid{
+  /* the split lands at 33.2vw, matching the mockup's 33.2% */
+  display:grid;grid-template-columns:calc(33.2vw - var(--cpad)) minmax(0,1fr);
+  gap:0;align-items:center;
+}
+
+.custom-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding-right:clamp(22px,3vw,54px)}
+.custom-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(30px,3.9vw,62px);line-height:.92;letter-spacing:-.005em;margin:0;
+}
+.custom-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content}
+.custom-sub{
+  font-size:clamp(13.5px,1.05vw,16.5px);line-height:1.66;color:#2c3236;
+  margin:clamp(16px,2.4vh,28px) 0 clamp(24px,3.6vh,44px);
+}
+
+.custom-list{width:100%;border-top:1px solid var(--paper-rule)}
+.custom-list li{
+  display:grid;grid-template-columns:34px 30px 1fr;
+  gap:2px clamp(10px,1.2vw,18px);align-items:center;
+  padding:clamp(12px,1.9vh,20px) 0;border-bottom:1px solid var(--paper-rule);
+}
+.cs-n{
+  grid-row:span 2;font-family:var(--f-cond);font-weight:600;
+  font-size:clamp(17px,1.5vw,23px);letter-spacing:.01em;color:var(--paper-ink);
+}
+.cs-ico{grid-row:span 2;width:clamp(22px,1.85vw,29px);height:auto;color:var(--paper-ink);stroke-width:1.35}
+.cs-t{
+  font-family:var(--f-disp);font-weight:700;font-size:clamp(12px,1vw,14.5px);
+  letter-spacing:.09em;text-transform:uppercase;align-self:end;
+}
+.cs-d{font-size:clamp(11.5px,.92vw,14px);color:var(--paper-mute);line-height:1.45;align-self:start}
+
+.custom-fig{margin:0;min-width:0}
+.custom-fig img{width:100%;height:auto;display:block}
+
+.custom-foot{
+  margin-top:clamp(26px,4vh,48px);
+  padding:clamp(16px,2.6vh,30px) var(--cpad) 0 0;
+  border-top:1px solid var(--paper-rule);
+  text-align:center;
+  font-family:var(--f-mono);font-size:clamp(10px,.84vw,12px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+
+@media (max-width:1000px){
+  .custom-inner{padding-right:var(--cpad)}
+  .custom-grid{grid-template-columns:1fr}
+  .custom-grid{grid-template-columns:1fr;gap:32px}
+  .custom-fig{order:2}
+  .custom-copy{order:1}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionBrain ─ enters horizontally.
+   The wrapper supplies vertical scroll distance; the panel inside
+   is pinned and slides in from the right as that distance is spent.
+   Copy sits left of the wall corner, which the plate puts at 40.1%.
+   ════════════════════════════════════════════════════════ */
+
+/* Slide one is never animated: it is simply present the moment the deck
+   is reached. The only pause in this deck sits at its end, before the
+   cover begins. These undo the global pre-hide rules for that slide. */
+.js .deck-pin > .custom [data-lines] span i{transform:none}
+.js .deck-pin > .custom [data-reveal]{opacity:1;transform:none}
+.js .deck-pin > .custom .custom-list li{opacity:1;transform:none}
+
+.deck{position:relative;height:280vh;background:var(--paper)}  /* 2 dwells + 1 cover */
+/* 500vh gives a 400vh run: ~150vh dwelling on slide one, ~204vh of
+   slow cover, then slide two holds. The cover is deliberately long so
+   the change reads as a deliberate move, not a snap. */
+.deck-pin{
+  position:sticky;top:0;height:100svh;overflow:hidden;
+  background:var(--paper);
+}
+/* both slides occupy the pin; the second rides over the first */
+.deck-pin > .custom,
+.deck-pin > .brain{position:absolute;inset:0;overflow:hidden}
+.deck-pin > .custom{
+  display:flex;flex-direction:column;justify-content:center;
+  z-index:1;will-change:transform;
+}
+.deck-pin > .custom .custom-inner{width:100%;padding-top:0;padding-bottom:0}
+.brain{color:var(--paper-ink);z-index:2;will-change:transform}
+.js .brain{transform:translateX(100%)}
+
+.brain-media{
+  position:absolute;inset:0;z-index:0;
+  background:url("assets/images/s5-brain.webp") right center/cover no-repeat;
+  will-change:transform;
+}
+
+.brain-rail{
+  position:absolute;top:clamp(20px,5.2vh,52px);left:clamp(18px,4vw,74px);z-index:2;
+  display:flex;align-items:center;gap:clamp(14px,1.6vw,26px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.br-n{font-family:var(--f-cond);font-weight:600;font-size:clamp(19px,1.8vw,30px);letter-spacing:0}
+.br-rule{display:block;width:clamp(34px,3.4vw,58px);height:1px;background:var(--paper-ink);opacity:.5}
+.br-l{color:var(--paper-ink)}
+
+.brain-copy{
+  position:absolute;z-index:2;
+  left:clamp(18px,4vw,74px);top:50%;transform:translateY(-50%);
+  width:min(27%,400px);
+  display:flex;flex-direction:column;align-items:flex-start;
+}
+.br-eyebrow{
+  font-family:var(--f-mono);font-size:clamp(9.5px,.78vw,11px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-mute);
+  margin-bottom:clamp(14px,2vh,24px);
+}
+.brain-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(27px,3.3vw,52px);line-height:.92;letter-spacing:-.005em;margin:0;
+}
+.brain-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content}
+.brain-sub{
+  font-size:clamp(13px,1.02vw,16px);line-height:1.62;color:#2b3034;
+  margin:clamp(16px,2.4vh,28px) 0 clamp(22px,3.2vh,38px);
+}
+.brain-cta{gap:clamp(20px,2.4vw,42px)}
+
+.brain-foot{
+  position:absolute;z-index:2;
+  left:clamp(18px,4vw,74px);bottom:clamp(22px,5vh,52px);
+  width:min(27%,400px);
+  display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px);
+}
+.bf-rule{display:block;height:1px;background:var(--paper-rule);width:100%}
+.bf-t{
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+
+.js .brain [data-b]{opacity:0;transform:translateY(20px)}
+
+@media (max-width:900px){
+  .deck{height:auto}
+  .deck-pin{position:static;height:auto;overflow:visible}
+  .deck-pin > .custom{position:relative;inset:auto;display:block;transform:none!important;opacity:1!important}
+  .deck-pin > .custom .custom-inner{padding-top:clamp(56px,9vh,104px);padding-bottom:clamp(34px,5vh,58px)}
+  /* must match the base rule's specificity: .deck-pin > .brain sets
+     position:absolute, and a media query adds none of its own */
+  .deck-pin > .brain{position:relative;inset:auto;min-height:88svh;transform:none!important}
+  .brain-media{background-position:72% center}
+  /* left is inherited from the absolute rule and shifts a relative box
+     bodily right, which is the 18px that broke the frame */
+  .brain-copy{position:relative;top:auto;left:auto;transform:none;width:auto;
+    padding:clamp(96px,16vh,150px) clamp(18px,5vw,34px) clamp(20px,4vh,40px)}
+  .brain-foot{position:relative;left:auto;bottom:auto;width:auto;
+    padding:0 clamp(18px,5vw,34px) clamp(28px,6vh,54px)}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionProducts ─ type only, no plate. The headline carries it,
+   so it runs larger here than anywhere else on the page.
+   ════════════════════════════════════════════════════════ */
+.products{
+  position:relative;background:var(--paper);color:var(--paper-ink);
+  min-height:100svh;display:flex;align-items:center;
+}
+.prod-inner{
+  width:100%;max-width:var(--max);margin:0 auto;
+  padding:clamp(40px,6vh,80px) clamp(18px,3.6vw,60px);
+}
+
+.prod-rail{
+  display:flex;align-items:center;justify-content:center;gap:clamp(14px,1.6vw,26px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+.pr-n{font-family:var(--f-cond);font-weight:600;font-size:clamp(20px,1.9vw,32px);letter-spacing:0}
+.pr-rule{display:block;width:clamp(34px,3.4vw,58px);height:1px;background:var(--paper-ink);opacity:.55}
+
+.prod-main{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:clamp(18px,2.8vh,34px);
+  padding:clamp(28px,5vh,58px) 0 clamp(30px,5vh,56px);
+}
+.prod-copy{min-width:0;display:flex;flex-direction:column;align-items:center}
+.prod-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(34px,5.4vw,92px);line-height:.9;letter-spacing:-.008em;margin:0;
+}
+.prod-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content;margin-inline:auto}
+.prod-sub{
+  font-size:clamp(14px,1.25vw,20px);line-height:1.56;color:#2b3034;
+  margin:clamp(20px,3vh,34px) 0 0;
+}
+
+.prod-index{
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:clamp(12px,2.6vw,40px);
+  font-family:var(--f-mono);font-size:clamp(11px,1.05vw,16px);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--paper-ink);
+  padding-top:clamp(4px,1vh,12px);
+}
+.prod-index .pi-rule{display:none}
+
+.prod-row{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+}
+.prod-row li{
+  display:grid;grid-template-columns:auto 1fr;
+  gap:2px clamp(10px,1.1vw,16px);align-items:center;
+  padding:0 clamp(12px,1.6vw,26px);
+  border-left:1px solid var(--paper-rule);
+}
+.prod-row li:first-child{border-left:0;padding-left:0}
+.pr-ico{grid-row:span 2;width:clamp(24px,2.1vw,34px);height:auto;color:var(--paper-ink)}
+.pr-t{
+  font-family:var(--f-disp);font-weight:500;font-size:clamp(13px,1.15vw,18px);
+  letter-spacing:-.012em;line-height:1.16;align-self:end;
+}
+.pr-k{
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);align-self:start;
+}
+
+.prod-foot{
+  margin-top:clamp(30px,5vh,58px);text-align:center;
+  font-family:var(--f-mono);font-size:clamp(9.5px,.84vw,12.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+
+@media (max-width:1000px){
+  .prod-main{gap:26px}
+  .prod-index{gap:10px 22px}
+  .prod-row{grid-template-columns:repeat(2,1fr);gap:22px 0}
+  .prod-row li{padding:14px 0 14px 16px}
+  .prod-row li:nth-child(odd){border-left:0;padding-left:0}
+}
+@media (max-width:560px){
+  .prod-row{grid-template-columns:1fr}
+  .prod-row li{border-left:0;padding-left:0;border-top:1px solid var(--paper-rule)}
+  .prod-row li:first-child{border-top:0}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionProduct01 ─ BidYori
+   The panel on the right tilts back on its X axis and settles flat
+   as it scrolls through: the same behaviour as the React
+   container-scroll component, done with a perspective wrapper.
+   ════════════════════════════════════════════════════════ */
+/* the ground is fixed; only the component groups move over it */
+/* one span per hand-over: 470px dwell + 940px travel + 100px empty,
+   four of them, over the 0.94 inset, plus the 100vh the pin fills */
+.pdeck{position:relative;height:790vh;background:var(--paper)}
+.pdeck-pin{
+  position:sticky;top:0;height:100svh;overflow:hidden;
+  background:var(--paper);          /* never transformed */
+  color:var(--paper-ink);
+}
+.pslide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.js .pslide .p1-copy,
+.js .pslide .p1-stage,
+.js .pslide .p1-foot{will-change:transform,opacity}
+.js .pslide:not([data-pslide="0"]) .p1-copy,
+.js .pslide:not([data-pslide="0"]) .p1-stage,
+.js .pslide:not([data-pslide="0"]) .p1-foot{opacity:0}
+.p1-inner{
+  width:100%;max-width:var(--max);margin:0 auto;
+  padding:clamp(20px,3vh,44px) clamp(18px,3.6vw,60px);
+}
+.p1-grid{
+  display:grid;grid-template-columns:minmax(0,.42fr) minmax(0,.58fr);
+  gap:clamp(24px,4vw,64px);align-items:center;
+}
+.p1-copy{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding-left:clamp(0px,2.4vw,40px)}
+
+.p1-rail{
+  display:flex;align-items:center;gap:clamp(14px,1.6vw,26px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+  margin-bottom:clamp(20px,3.4vh,42px);
+}
+.p1-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(38px,5vw,84px);line-height:.9;letter-spacing:-.008em;margin:0;
+}
+.p1-h span{overflow:hidden;padding-bottom:.09em;margin-bottom:-.09em;width:max-content}
+/* the <i> here is a line wrapper, not emphasis */
+.p1-h i{display:block;font-style:normal}
+.p1-kind{
+  font-family:var(--f-mono);font-size:clamp(12px,1.15vw,18px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-ink);
+  margin:clamp(8px,1.4vh,16px) 0 0;
+}
+.p1-sub{
+  font-size:clamp(14px,1.2vw,19px);line-height:1.56;color:#2b3034;
+  margin:clamp(18px,2.8vh,32px) 0 0;
+}
+.p1-line{display:block;width:min(100%,430px);height:1px;background:var(--paper-rule);margin:clamp(22px,3.4vh,40px) 0}
+
+.p1-stats{display:flex;align-items:stretch;margin:0 0 clamp(26px,4vh,46px)}
+.p1-stats li{
+  display:flex;flex-direction:column;gap:4px;
+  padding:0 clamp(14px,1.7vw,28px);border-left:1px solid var(--paper-rule);
+}
+.p1-stats li:first-child{border-left:0;padding-left:0}
+.p1-s-t{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(15px,1.5vw,24px);letter-spacing:.005em;line-height:1;
+}
+.p1-s-k{
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+}
+.p1-cta{gap:clamp(20px,2.4vw,44px)}
+
+/* the tilting panel */
+.p1-stage{perspective:1200px;perspective-origin:50% 20%;min-width:0}
+.p1-card{
+  margin:0;border-radius:26px;overflow:hidden;
+  border:4px solid #6c6c6c;background:#222;
+  padding:clamp(5px,.7vw,12px);
+  transform-origin:50% 100%;will-change:transform;
+  box-shadow:0 9px 20px #0000004a, 0 37px 37px #00000030,
+             0 84px 50px #0000001c, 0 149px 60px #00000008;
+}
+.p1-card img{width:100%;height:auto;display:block;border-radius:16px}
+.js .p1-card{transform:rotateX(20deg) scale(1.05)}
+
+.p1-foot{
+  margin-top:clamp(30px,5vh,58px);text-align:right;
+  font-family:var(--f-mono);font-size:clamp(9.5px,.84vw,12.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+
+@media (max-width:1000px){
+  .pdeck{height:auto}
+  .pdeck-pin{position:static;height:auto;overflow:visible}
+  .pslide{position:relative;inset:auto;padding:clamp(46px,8vh,86px) 0}
+  .pslide .p1-copy,.pslide .p1-stage,.pslide .p1-foot{opacity:1!important;transform:none!important}
+  .pslide + .pslide{border-top:1px solid var(--paper-rule)}
+  .p1-grid{grid-template-columns:1fr;gap:34px}
+  .p1-copy{padding-left:0;order:1}
+  .p1-stage{order:2;perspective:900px}
+  .p1-foot{text-align:left}
+}
+@media (max-width:560px){
+  .p1-stats{flex-wrap:wrap;gap:16px 0}
+  .p1-stats li{padding:0 14px}
+  .p1-card{border-radius:18px}
+}
+
+/* ════════════════════════════════════════════════════════
+   Outro ─ the pull back
+   A page-level fixed overlay, not a child of the pin, so it can take
+   the screen while the last product is still stuck under it.
+
+   The mark is painted as a background image rather than scaled with a
+   transform. To fill a 1080p screen from a 45px disc the mark has to be
+   drawn about forty thousand pixels wide; a transformed layer that size
+   is past the compositor's texture limit and would be dropped or turn
+   to mush, while a background is rasterised only where it shows.
+
+   app.js writes background-size and background-position each frame, and
+   two numbers here:
+     --in    the screen taking over          (0 -> 1)
+     --out   handing back to section 07      (0 -> 1)
+   ══════════════════════════════════════════════════════ */
+.outro{position:relative;height:500vh;background:var(--paper)}
+.outro-pin{
+  position:sticky;top:0;height:100svh;overflow:hidden;
+  background:var(--paper);color:var(--paper-ink);
+}
+
+.outro-field{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  visibility:hidden;                    /* js turns this on at the start */
+  background:var(--paper);
+  opacity:calc(var(--in,0) - var(--out,0));
+  will-change:opacity;
+}
+.outro-mark{
+  position:absolute;inset:0;
+  background-image:url("assets/brand/yorilabsailogo-ink.png");
+  background-repeat:no-repeat;
+  /* size and position come from app.js, every frame */
+}
+
+html:not(.js) .outro-field{display:none}
+
+
+/* ════════════════════════════════════════════════════════
+   SectionNext ─ 07, the last word
+   Copy on the left, the harness on the right, bleeding off the edge
+   the way the plate itself is drawn. The mark in the corner is the one
+   the outro walks to, so its box has to stay put at every width.
+   ════════════════════════════════════════════════════════ */
+.nx{
+  position:absolute;inset:0;z-index:1;
+  background:var(--paper);color:var(--paper-ink);
+  display:flex;align-items:stretch;overflow:hidden;
+}
+.nx-inner{
+  width:100%;max-width:var(--max);margin:0 auto;
+  padding:clamp(20px,3.2vh,40px) clamp(18px,3.6vw,60px);
+  display:flex;flex-direction:column;
+}
+
+.nx-top{display:flex;align-items:flex-start;justify-content:space-between;gap:clamp(20px,4vw,64px)}
+.nx-rail{
+  display:flex;align-items:center;gap:clamp(14px,1.6vw,26px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+/* the mark the outro walks to, and then leaves standing here */
+.nx-brand{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(6px,1vh,12px)}
+.nx-mark{display:block;width:clamp(132px,13.5vw,208px);height:auto}
+.nx-note{
+  display:flex;align-items:flex-start;justify-content:flex-end;gap:clamp(12px,1.4vw,22px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;line-height:1.7;
+  text-align:right;color:var(--paper-ink);
+}
+.nx-note .pr-rule{margin-top:.55em}
+
+.nx-main{
+  flex:1;display:grid;grid-template-columns:minmax(0,.46fr) minmax(0,.54fr);
+  gap:clamp(16px,2.4vw,40px);align-items:center;
+  padding:clamp(8px,1.4vh,20px) 0;
+}
+.nx-copy{min-width:0}
+.nx-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(38px,7.2vw,122px);line-height:.92;letter-spacing:-.012em;margin:0;
+}
+.nx-h span{display:block;overflow:hidden;padding-bottom:.07em;margin-bottom:-.07em;width:max-content}
+.nx-h i{display:block;font-style:normal}
+.nx-blue{color:var(--brand-blue)}
+
+.nx-sub{
+  font-size:clamp(14px,1.3vw,21px);line-height:1.5;color:#2b3034;
+  margin:clamp(16px,2.4vh,30px) 0 clamp(18px,2.6vh,32px);
+}
+
+.nx-actions{display:flex;align-items:stretch;gap:clamp(18px,2.4vw,40px)}
+.nx-cta{
+  display:inline-flex;align-items:center;gap:clamp(16px,2vw,34px);
+  background:var(--paper-ink);color:var(--paper);
+  padding:clamp(14px,1.8vh,20px) clamp(20px,2.4vw,34px);
+  font-family:var(--f-mono);font-size:clamp(11px,1vw,15px);
+  letter-spacing:.16em;text-transform:uppercase;
+  transition:background .25s;
+}
+.nx-cta:hover{background:var(--brand-blue)}
+.nx-cta i{font-style:normal}
+.nx-sep{width:1px;background:var(--paper-rule);flex:none}
+.nx-link{
+  display:inline-flex;align-items:center;align-self:center;
+  font-family:var(--f-mono);font-size:clamp(11px,1vw,15px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+  border-bottom:1px solid var(--paper-rule);
+  padding-bottom:.35em;transition:border-color .25s,color .25s;
+}
+.nx-link:hover{color:var(--brand-blue);border-color:var(--brand-blue)}
+
+/* the plate runs off the right edge, exactly as the artwork is drawn.
+   The section is capped at --max and centred, so reaching the real edge
+   means adding back the gutter as well as the padding. .nx clips it. */
+.nx-fig{margin:0;min-width:0}
+.nx-fig img{
+  display:block;max-width:none;height:auto;
+  width:calc(100% + clamp(18px,3.6vw,60px) + max(0px, (100vw - var(--max)) / 2));
+}
+
+.nx-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  border-top:1px solid var(--paper-rule);padding-top:clamp(12px,1.8vh,20px);
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+.nx-f-l{display:flex;align-items:center;gap:clamp(12px,1.6vw,26px)}
+.nx-f-l b{font-weight:400}
+.nx-f-r{display:flex;align-items:center;gap:clamp(14px,1.9vw,32px)}
+.nx-f-r li{position:relative}
+.nx-f-r li + li::before{
+  content:"";position:absolute;left:calc(-1 * clamp(7px,.95vw,16px));top:.1em;bottom:.1em;
+  width:1px;background:var(--paper-rule);
+}
+.nx-foot .pr-rule{margin:0}
+
+.js .nx-h span i{transform:translateY(102%)}
+.js [data-nx]{opacity:0}
+
+@media (max-width:1000px){
+  .outro{height:auto}
+  .outro-pin{position:static;height:auto;overflow:visible}
+  .outro-field{display:none}
+  .nx{position:relative;inset:auto;min-height:100svh}
+  .js .nx-h span i{transform:none}
+  .js [data-nx]{opacity:1}
+}
+@media (max-width:900px){
+  .nx-main{grid-template-columns:1fr;gap:24px;align-items:start}
+  .nx-fig img{width:100%}
+  .nx-mark{width:clamp(104px,22vw,150px)}
+  .nx-note{display:none}
+  .nx-f-r{flex-wrap:wrap;gap:10px 18px}
+}
+@media (max-width:560px){
+  .nx-actions{flex-wrap:wrap;gap:16px}
+  .nx-sep{display:none}
+  .nx-foot{flex-direction:column;align-items:flex-start;gap:12px}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   BaseFooter ─ 08, the index
+   Paper, like every section above it, and carrying the same
+   numbered rail so it reads as the last panel rather than a
+   different piece of furniture. Everything listed here exists:
+   the sections are real anchors, the products are the five in
+   the deck, and the one live link is the only one there is.
+   ════════════════════════════════════════════════════════ */
+.ftr{
+  position:relative;background:var(--paper);color:var(--paper-ink);
+  border-top:1px solid var(--paper-rule);
+}
+.ftr-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:clamp(40px,6vh,80px) clamp(18px,3.6vw,60px) clamp(18px,2.4vh,28px);
+}
+
+/* ── the mark and the rail ─────────────────────────────── */
+.ftr-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:clamp(20px,4vw,64px);
+}
+.ftr-brand{display:flex;flex-direction:column;gap:clamp(8px,1.2vh,14px)}
+.ftr-mark{
+  display:block;width:clamp(168px,19vw,300px);height:auto;
+  will-change:transform;
+}
+.ftr-tag{
+  margin:0;padding-left:clamp(6px,1vw,16px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;line-height:1.8;
+  color:var(--paper-ink);
+}
+.ftr-rail{
+  display:flex;align-items:center;gap:clamp(14px,1.6vw,26px);
+  font-family:var(--f-mono);font-size:clamp(9.5px,.8vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+  padding-top:clamp(4px,.8vh,10px);
+}
+
+/* ── the statement and the index ───────────────────────── */
+.ftr-body{
+  display:grid;grid-template-columns:minmax(0,.38fr) minmax(0,.62fr);
+  gap:clamp(28px,3.4vw,60px);
+  padding:clamp(34px,5.5vh,66px) 0 clamp(30px,4.5vh,56px);
+}
+
+.ftr-eye{
+  display:flex;align-items:center;gap:clamp(12px,1.4vw,22px);
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+  margin-bottom:clamp(14px,2.2vh,26px);
+}
+.ftr-eye .pr-rule{flex:1;max-width:clamp(30px,3.4vw,58px)}
+.ftr-h{
+  font-family:var(--f-disp);font-weight:600;
+  font-size:clamp(24px,2.6vw,38px);line-height:1.08;letter-spacing:-.03em;margin:0;
+}
+.ftr-h span{display:block}
+.ftr-blue{color:var(--brand-blue)}
+.ftr-sub{
+  font-size:clamp(14px,1.1vw,17px);line-height:1.6;color:#2b3034;
+  margin:clamp(16px,2.4vh,28px) 0 clamp(20px,3vh,34px);
+}
+
+.ftr-actions{display:flex;align-items:stretch;gap:clamp(18px,2.2vw,36px)}
+.ftr-cta{
+  display:inline-flex;align-items:center;gap:clamp(16px,2vw,32px);
+  background:var(--paper-ink);color:var(--paper);
+  padding:clamp(13px,1.7vh,18px) clamp(18px,2.2vw,30px);
+  font-family:var(--f-mono);font-size:clamp(10.5px,.92vw,13.5px);
+  letter-spacing:.16em;text-transform:uppercase;
+  transition:background .25s;
+}
+.ftr-cta:hover{background:var(--brand-blue)}
+.ftr-cta i{font-style:normal}
+.ftr-sep{width:1px;background:var(--paper-rule);flex:none}
+.ftr-link{
+  display:inline-flex;align-items:center;align-self:center;
+  font-family:var(--f-mono);font-size:clamp(10.5px,.92vw,13.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+  border-bottom:1px solid var(--paper-rule);padding-bottom:.35em;
+  transition:color .25s,border-color .25s;
+}
+.ftr-link:hover{color:var(--brand-blue);border-color:var(--brand-blue)}
+
+.ftr-nav{
+  display:grid;
+  /* the subscribe field needs a real box, so the last column is wider */
+  grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.6fr);
+  gap:clamp(16px,1.9vw,32px);
+}
+.ftr-col{
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:clamp(9px,1.3vh,14px);
+  border-left:1px solid var(--paper-rule);padding-left:clamp(14px,1.8vw,30px);
+}
+.ftr-col:first-child{border-left:0;padding-left:0}
+.ftr-h6{
+  font-family:var(--f-mono);font-size:clamp(9px,.76vw,11px);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--paper-ink);
+  margin-bottom:clamp(4px,.8vh,10px);
+}
+.ftr-col a{
+  display:flex;flex-direction:column;gap:1px;
+  font-size:clamp(13px,1.02vw,15.5px);letter-spacing:-.008em;
+  color:var(--paper-ink);transition:color .22s;
+}
+.ftr-col a b{font-weight:400}
+.ftr-col a i{
+  font-style:normal;font-family:var(--f-mono);
+  font-size:clamp(8.5px,.72vw,10.5px);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--paper-mute);
+}
+.ftr-col a:hover{color:var(--brand-blue)}
+.ftr-out{font-size:.86em}
+
+.ftr-loop p{
+  margin:0;font-size:clamp(13px,1.02vw,15.5px);line-height:1.55;color:#2b3034;
+}
+.ftr-form{display:flex;width:100%;border:1px solid var(--paper-rule);background:transparent}
+.ftr-form input{
+  flex:1;min-width:0;border:0;background:transparent;
+  padding:clamp(10px,1.4vh,14px) clamp(10px,1.2vw,16px);
+  font-family:var(--f-mono);font-size:clamp(10.5px,.86vw,12.5px);
+  letter-spacing:.06em;color:var(--paper-ink);
+}
+.ftr-form input::placeholder{color:var(--paper-mute)}
+.ftr-form input:focus{outline:2px solid var(--brand-blue);outline-offset:-2px}
+.ftr-form button{
+  flex:none;border:0;cursor:pointer;
+  background:var(--paper-ink);color:var(--paper);
+  padding:0 clamp(14px,1.6vw,22px);font-size:15px;
+  transition:background .25s;
+}
+.ftr-form button:hover{background:var(--brand-blue)}
+.ftr-form button i{font-style:normal}
+.ftr-fine{
+  font-family:var(--f-mono);font-size:clamp(8.5px,.72vw,10.5px);
+  letter-spacing:.13em;text-transform:uppercase;color:var(--paper-mute);
+}
+
+/* ── the base bar and the closing strip ────────────────── */
+.ftr-base{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(18px,3vw,44px);flex-wrap:wrap;
+  border-top:1px solid var(--paper-rule);
+  padding:clamp(16px,2.4vh,26px) 0;
+  font-family:var(--f-mono);font-size:clamp(9px,.76vw,11px);
+  letter-spacing:.13em;text-transform:uppercase;color:var(--paper-mute);
+}
+.ftr-social{display:flex;align-items:center;gap:clamp(14px,1.8vw,28px);margin-left:auto}
+.ftr-social a{display:block;color:var(--paper-ink);opacity:.75;transition:opacity .22s,color .22s}
+.ftr-social a[href]{cursor:pointer}
+.ftr-social a[href]:hover{opacity:1;color:var(--brand-blue)}
+.ftr-social svg{width:clamp(16px,1.5vw,20px);height:auto;display:block;fill:currentColor}
+/* the drawn icons must keep their counters: a blanket fill turns the
+   Instagram frame into a solid square, since CSS beats the attribute */
+.ftr-social svg.is-stroke{fill:none;stroke:currentColor}
+.ftr-ops{
+  text-align:right;line-height:1.7;color:var(--paper-ink);
+  border-left:1px solid var(--paper-rule);padding-left:clamp(16px,2vw,32px);
+}
+
+.ftr-strip{
+  display:flex;align-items:center;gap:clamp(14px,2vw,34px);
+  border-top:1px solid var(--paper-rule);padding-top:clamp(14px,2vh,22px);
+  font-family:var(--f-mono);font-size:clamp(9px,.76vw,11px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+.ftr-strip .pr-rule{flex:1;max-width:none}
+.ftr-eq b{font-weight:400;color:var(--paper-mute);padding:0 .25em}
+.ftr-eq em{font-style:normal;color:var(--brand-blue)}
+.ftr-est{color:var(--paper-mute)}
+
+@media (max-width:1000px){
+  .ftr-body{grid-template-columns:1fr;gap:36px}
+  .ftr-nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 22px}
+  .ftr-col:nth-child(odd){border-left:0;padding-left:0}
+}
+@media (max-width:700px){
+  .ftr-top{flex-direction:column;gap:18px}
+  .ftr-rail{padding-top:0}
+  .ftr-nav{grid-template-columns:1fr;gap:26px}
+  .ftr-col{border-left:0;padding-left:0}
+  .ftr-base{flex-direction:column;align-items:flex-start;gap:16px}
+  .ftr-social{margin-left:0}
+  .ftr-ops{text-align:left;border-left:0;padding-left:0}
+  .ftr-strip{flex-wrap:wrap;gap:10px 16px}
+  .ftr-strip .pr-rule{display:none}
+}
+@media (max-width:560px){
+  .ftr-actions{flex-wrap:wrap;gap:16px}
+  .ftr-sep{display:none}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   ContactPage ─ the enquiry form, on its own
+   Shares the shell with the home page and adds only what this
+   page needs. There is no backend, so the form composes a mail
+   instead of pretending to post somewhere.
+   ════════════════════════════════════════════════════════ */
+.cx-page{background:var(--paper);color:var(--paper-ink)}
+/* the home page's ambient wash sits behind opaque sections there and is
+   never seen; here there is nothing over it, so it tints the whole page */
+.cx-page body::before,body.cx-page::before{display:none}
+.cx{background:var(--paper)}
+.cx-page .hdr.is-page{
+  grid-template-columns:auto 1fr auto;align-items:center;
+  border-bottom:0;min-height:clamp(64px,10vh,104px);
+  padding-right:clamp(18px,3.6vw,60px);
+  gap:clamp(16px,3vw,50px);
+}
+.cx-page .hdr.is-page .hdr-mark{padding-left:clamp(18px,3.6vw,60px);border-right:0}
+.cx-page .hdr.is-page .hdr-nav{justify-content:center;border:0}
+.hdr-cta{
+  display:inline-flex;align-items:center;gap:clamp(10px,1.2vw,18px);
+  background:var(--paper-ink);color:var(--paper);
+  padding:clamp(11px,1.5vh,16px) clamp(16px,1.9vw,26px);
+  font-family:var(--f-mono);font-size:clamp(10px,.86vw,12.5px);
+  letter-spacing:.16em;text-transform:uppercase;
+  transition:background .25s;white-space:nowrap;
+}
+.hdr-cta:hover{background:var(--brand-blue)}
+.hdr-cta i{font-style:normal}
+
+.cx{position:relative;overflow:hidden;padding:clamp(16px,2.6vh,34px) 0 clamp(18px,3vh,40px)}
+.cx-inner{
+  position:relative;z-index:1;
+  max-width:var(--max);margin:0 auto;
+  padding:0 clamp(18px,3.6vw,60px);
+  display:grid;grid-template-columns:minmax(0,.40fr) minmax(0,.60fr) auto;
+  gap:clamp(24px,3.4vw,60px);align-items:start;
+}
+
+/* the drawn arc, off the right edge, with the mark's blue on it */
+/* placed so its leftmost point, and the dot on it, land in the gap
+   between the card and the index rather than behind either */
+.cx-arc{
+  position:absolute;right:-32vw;top:52%;transform:translateY(-50%);
+  width:42vw;aspect-ratio:1;border:1px solid var(--paper-rule);border-radius:50%;
+  pointer-events:none;z-index:0;
+}
+.cx-arc::after{
+  content:"";position:absolute;left:-4px;top:50%;margin-top:-4px;
+  width:8px;height:8px;border-radius:50%;background:var(--brand-blue);
+}
+
+/* ── the ask ───────────────────────────────────────────── */
+.cx-rail{
+  display:flex;align-items:center;gap:clamp(12px,1.4vw,22px);
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+.cx-rail .pr-rule{width:clamp(28px,3.2vw,54px)}
+.cx-h{
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(38px,6.2vw,104px);line-height:.92;letter-spacing:-.012em;
+  margin:clamp(16px,2.6vh,32px) 0 0;
+}
+.cx-h span{display:block;overflow:hidden;padding-bottom:.07em;margin-bottom:-.07em;width:max-content}
+.cx-h i{display:block;font-style:normal}
+.cx-h em{font-style:normal;color:var(--brand-blue)}
+.cx-sub{
+  font-size:clamp(14px,1.2vw,19px);line-height:1.55;color:#2b3034;
+  margin:clamp(18px,2.8vh,32px) 0 0;
+}
+
+.cx-steps{
+  display:flex;align-items:stretch;
+  margin:clamp(24px,4vh,46px) 0 clamp(24px,4vh,44px);
+}
+.cx-steps li{
+  display:flex;align-items:flex-start;gap:clamp(10px,1.2vw,18px);
+  padding:0 clamp(14px,1.7vw,28px);
+  border-left:1px solid var(--paper-rule);
+}
+.cx-steps li:first-child{border-left:0;padding-left:0}
+.cx-n{
+  font-family:var(--f-cond);font-weight:600;
+  font-size:clamp(15px,1.5vw,23px);line-height:1;letter-spacing:.005em;
+}
+.cx-t{
+  font-family:var(--f-mono);font-size:clamp(9px,.76vw,11px);
+  letter-spacing:.14em;text-transform:uppercase;line-height:1.65;color:var(--paper-mute);
+}
+
+.cx-details{display:flex;align-items:stretch;gap:clamp(16px,2.2vw,38px)}
+.cx-detail{
+  display:flex;align-items:flex-start;gap:clamp(10px,1.2vw,16px);
+  padding-left:clamp(16px,2.2vw,38px);border-left:1px solid var(--paper-rule);
+  color:var(--paper-ink);
+}
+.cx-detail:first-child{border-left:0;padding-left:0}
+.cx-detail svg{width:clamp(17px,1.5vw,21px);height:auto;flex:none;margin-top:.1em}
+.cx-detail span{display:flex;flex-direction:column;gap:3px}
+.cx-detail b{font-weight:400;font-size:clamp(13px,1.05vw,16px);letter-spacing:-.008em}
+.cx-detail i{
+  font-style:normal;font-family:var(--f-mono);
+  font-size:clamp(8.5px,.72vw,10.5px);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--paper-mute);
+}
+a.cx-detail{transition:color .22s}
+a.cx-detail:hover{color:var(--brand-blue)}
+
+/* ── the card ──────────────────────────────────────────── */
+.cx-card{
+  border:1px solid var(--paper-rule);background:#f4f0ed;
+  padding:clamp(18px,2.2vw,32px);
+  display:flex;flex-direction:column;gap:clamp(13px,1.8vh,22px);
+}
+.cx-card-top{display:flex;align-items:baseline;justify-content:space-between;gap:18px}
+.cx-card-h{
+  font-family:var(--f-mono);font-size:clamp(11px,.98vw,14px);
+  letter-spacing:.18em;text-transform:uppercase;color:var(--paper-ink);
+}
+.cx-card-note{
+  font-family:var(--f-mono);font-size:clamp(8.5px,.72vw,10.5px);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--paper-mute);
+}
+.cx-card-note i{font-style:normal;color:var(--brand-blue)}
+
+.cx-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,1.3vw,18px)}
+.cx-wide{grid-column:1 / -1}
+.cx-field{display:block;min-width:0;position:relative}
+/* required is marked in the mark's own blue, never red: the palette
+   has one accent and an alarm colour would be the only red on the site */
+.cx-req{
+  position:absolute;top:50%;right:clamp(11px,1.1vw,15px);transform:translateY(-50%);
+  font-style:normal;font-size:1.25em;line-height:0;color:var(--brand-blue);
+  pointer-events:none;
+}
+.cx-field.is-req input{padding-right:clamp(26px,2.4vw,32px)}
+.cx-field input[aria-invalid="true"]{border-color:var(--brand-blue);background:#e9effb}
+.cx-lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cx-field input,.cx-field select,.cx-field textarea{
+  width:100%;border:1px solid var(--paper-rule);background:var(--paper);
+  padding:clamp(11px,1.5vh,15px) clamp(12px,1.2vw,16px);
+  font-family:var(--f-disp);font-weight:300;letter-spacing:.01em;
+  font-size:clamp(13px,1.02vw,15.5px);color:var(--paper-ink);
+  border-radius:0;transition:border-color .22s;
+}
+.cx-field textarea{resize:vertical;min-height:clamp(96px,14vh,150px);line-height:1.55}
+.cx-field select{
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236d6862' stroke-width='1.6'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:16px;
+  padding-right:38px;cursor:pointer;
+}
+.cx-field input::placeholder,.cx-field textarea::placeholder{color:var(--paper-mute)}
+.cx-field input:focus,.cx-field select:focus,.cx-field textarea:focus{
+  outline:none;border-color:var(--brand-blue);
+}
+
+.cx-heard{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:clamp(12px,1.8vw,30px)}
+.cx-heard legend{
+  float:left;width:100%;padding:0 0 clamp(10px,1.4vh,16px);
+  font-family:var(--f-mono);font-size:clamp(8.5px,.74vw,10.5px);
+  letter-spacing:.16em;text-transform:uppercase;color:var(--paper-ink);
+}
+.cx-heard label{display:inline-flex;align-items:center;gap:9px;cursor:pointer}
+.cx-heard input{
+  appearance:none;width:15px;height:15px;flex:none;
+  border:1px solid var(--paper-rule);background:var(--paper);
+  cursor:pointer;transition:background .18s,border-color .18s;
+}
+.cx-heard input:checked{
+  background:var(--brand-blue) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4'><path d='m5 12.5 4.5 4.5L19 7'/></svg>") center/11px no-repeat;
+  border-color:var(--brand-blue);
+}
+.cx-heard input:focus-visible{outline:2px solid var(--brand-blue);outline-offset:2px}
+.cx-heard span{font-size:clamp(13px,1.02vw,15.5px);letter-spacing:-.008em}
+
+.cx-send{display:flex;align-items:center;gap:clamp(16px,2.2vw,34px);flex-wrap:wrap}
+.cx-btn{
+  display:inline-flex;align-items:center;gap:clamp(14px,1.8vw,30px);
+  border:0;cursor:pointer;
+  background:var(--paper-ink);color:var(--paper);
+  padding:clamp(14px,1.9vh,20px) clamp(20px,2.4vw,34px);
+  font-family:var(--f-mono);font-size:clamp(10.5px,.92vw,13.5px);
+  letter-spacing:.16em;text-transform:uppercase;
+  transition:background .25s;
+}
+.cx-btn:hover{background:var(--brand-blue)}
+.cx-btn i{font-style:normal}
+.cx-fine{
+  margin:0;font-family:var(--f-mono);
+  font-size:clamp(8.5px,.72vw,10.5px);letter-spacing:.13em;
+  text-transform:uppercase;line-height:1.75;color:var(--paper-mute);
+}
+
+/* ── the index ─────────────────────────────────────────── */
+.cx-index{
+  display:flex;flex-direction:column;gap:clamp(12px,1.8vh,20px);
+  border-left:1px solid var(--paper-rule);padding-left:clamp(16px,2vw,34px);
+  font-family:var(--f-mono);font-size:clamp(9px,.78vw,11.5px);
+  letter-spacing:.2em;text-transform:uppercase;line-height:1.9;color:var(--paper-ink);
+}
+.cx-index ol{display:flex;flex-direction:column}
+.cx-index p{margin:0;font-size:inherit;letter-spacing:inherit;line-height:1.9}
+.cx-tick{display:block;width:clamp(22px,2vw,32px);height:1px;background:var(--paper-ink);opacity:.55}
+
+/* ── the base bar ──────────────────────────────────────── */
+.cx-foot{border-top:1px solid var(--paper-rule);background:var(--paper)}
+.cx-foot-inner{
+  max-width:var(--max);margin:0 auto;
+  padding:clamp(14px,2.2vh,24px) clamp(18px,3.6vw,60px);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:clamp(18px,3vw,44px);flex-wrap:wrap;
+  font-family:var(--f-mono);font-size:clamp(9px,.76vw,11px);
+  letter-spacing:.13em;text-transform:uppercase;color:var(--paper-mute);
+}
+.cx-foot .ftr-social{margin-left:auto}
+.cx-ops{
+  text-align:right;line-height:1.7;color:var(--paper-ink);
+  border-left:1px solid var(--paper-rule);padding-left:clamp(16px,2vw,32px);
+}
+
+.js .cx-h span i{transform:translateY(102%)}
+.js [data-cx],
+.js .cx-card{opacity:0}
+
+@media (max-width:1180px){
+  .cx-inner{grid-template-columns:minmax(0,.46fr) minmax(0,.54fr)}
+  .cx-index{
+    grid-column:1 / -1;flex-direction:row;flex-wrap:wrap;align-items:center;
+    gap:10px clamp(16px,2.4vw,34px);
+    border-left:0;padding-left:0;
+    border-top:1px solid var(--paper-rule);padding-top:clamp(16px,2.4vh,24px);
+    margin-top:clamp(10px,1.6vh,18px);
+  }
+  .cx-index ol{flex-direction:row;gap:clamp(14px,2vw,28px)}
+  .cx-tick{display:none}
+}
+@media (max-width:900px){
+  .cx-inner{grid-template-columns:1fr;gap:34px}
+  .cx-arc{display:none}
+  .cx-page .hdr.is-page .hdr-nav{display:none}
+}
+@media (max-width:620px){
+  .cx-grid{grid-template-columns:1fr}
+  .cx-steps{flex-wrap:wrap;gap:16px 0}
+  .cx-steps li{padding:0 14px}
+  .cx-details{flex-direction:column;gap:16px}
+  .cx-detail{border-left:0;padding-left:0}
+  .cx-foot-inner{flex-direction:column;align-items:flex-start;gap:14px}
+  .cx-foot .ftr-social{margin-left:0}
+  .cx-ops{text-align:left;border-left:0;padding-left:0}
+}
+
+
+/* ════════════════════════════════════════════════════════
+   MobileNav ─ 08 phone only
+   The burger existed but opened onto nothing, so a phone had no
+   way through the site at all. A full-screen paper panel, in the
+   same language as the sections it leads to.
+   ════════════════════════════════════════════════════════ */
+.mnav{
+  position:fixed;inset:0;z-index:180;
+  background:var(--paper);color:var(--paper-ink);
+  display:flex;flex-direction:column;
+  padding:0 clamp(20px,6vw,40px) clamp(28px,5vh,48px);
+  overflow-y:auto;overscroll-behavior:contain;
+}
+.mnav[hidden]{display:none}
+
+.mnav-top{
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:clamp(64px,10vh,88px);
+  margin:0 calc(-1 * clamp(20px,6vw,40px));
+  padding:0 clamp(20px,6vw,40px);
+  border-bottom:1px solid var(--paper-rule);
+}
+.mnav-mark img{display:block;width:clamp(112px,30vw,150px);height:auto}
+.mnav-x{
+  width:48px;height:48px;margin-right:-12px;
+  border:0;background:transparent;cursor:pointer;
+  display:grid;place-items:center;position:relative;
+}
+.mnav-x span{
+  position:absolute;width:22px;height:1.5px;background:var(--paper-ink);
+  transition:background .2s;
+}
+.mnav-x span:first-child{transform:rotate(45deg)}
+.mnav-x span:last-child{transform:rotate(-45deg)}
+
+.mnav-links{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  gap:clamp(4px,1.4vh,12px);padding:clamp(20px,4vh,40px) 0;
+}
+.mnav-links a{
+  display:block;padding:clamp(9px,1.6vh,14px) 0;
+  font-family:var(--f-cond);font-weight:600;text-transform:uppercase;
+  font-size:clamp(30px,9vw,46px);line-height:1;letter-spacing:-.01em;
+  color:var(--paper-ink);transition:color .2s;
+}
+.mnav-links a:active{color:var(--brand-blue)}
+
+.mnav-foot{
+  display:flex;flex-direction:column;align-items:flex-start;
+  gap:clamp(14px,2.4vh,20px);
+  border-top:1px solid var(--paper-rule);padding-top:clamp(20px,3.4vh,30px);
+}
+.mnav-cta{
+  display:inline-flex;align-items:center;gap:clamp(18px,5vw,32px);
+  min-height:52px;padding:0 clamp(22px,6vw,32px);
+  background:var(--paper-ink);color:var(--paper);
+  font-family:var(--f-mono);font-size:13px;
+  letter-spacing:.16em;text-transform:uppercase;
+}
+.mnav-cta i{font-style:normal}
+.mnav-mail{
+  font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--paper-mute);
+  min-height:44px;display:inline-flex;align-items:center;
+}
+
+/* a real tap target, phones only: the desktop header's own sizing
+   already exceeds this, but keep the rule out of its way regardless */
+@media (max-width:900px){
+  .hdr-menu{min-width:48px;min-height:48px}
+}
+
+/* nothing behind the panel should scroll or be reachable */
+html.mnav-open,body.mnav-open{overflow:hidden}
+
+@media (min-width:901px){
+  .mnav{display:none!important}
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   ATMOSPHERE
+   The page was one flat plane of #0b0d0e. Three layers give it
+   depth without adding a single new colour:
+     1. grain          — the black gets a surface
+     2. ambient field  — brand blue bled in as light, 4-7% alpha
+     3. section plates — the unused Signal images, masked to nothing
+                         at the edges, so text sections sit inside
+                         the imagery instead of beside it
+   ══════════════════════════════════════════════════════════ */
+
+/* 1 ── grain over everything */
+body::after{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;
+  background-image:url("assets/brand/noise.png");
+  background-size:180px 180px;
+  opacity:.5;mix-blend-mode:overlay;
+}
+
+/* 2 ── ambient blue field, fixed so it drifts against the scroll */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(58vw 46vw at 82% 8%,  rgba(0,105,249,.075), transparent 62%),
+    radial-gradient(48vw 40vw at 6%  46%, rgba(0,105,249,.055), transparent 60%),
+    radial-gradient(70vw 52vw at 62% 92%, rgba(0,105,249,.065), transparent 64%);
+}
+main,.ftr{position:relative;z-index:1}
+
+/* ── responsive ───────────────────────────────────────────── */
+@media (max-width:700px){
+  .hdr{flex-wrap:wrap;gap:14px}
+}
+
+/* ════════════════════════════════════════════════════════
+   Phone ─ centred, and section 05 rebuilt
+   Last in the file on purpose: several of these override rules
+   of equal specificity, so source order is what settles them.
+   Nothing here is reachable above 900px.
+   ════════════════════════════════════════════════════════ */
+@media (max-width:900px){
+
+  /* ── section 05 ────────────────────────────────────────
+     The plate is 1815x866. Covering a 390x740 box scales it to
+     1551 wide, so a phone saw about a quarter of it: two brains
+     cropped to one, and a floor filling the rest. On a phone it
+     stops being a backdrop and becomes a picture in the flow,
+     at its own proportions, with the copy on paper above it
+     where it can actually be read.
+     ──────────────────────────────────────────────────── */
+  .deck-pin > .brain{
+    min-height:0;
+    display:flex;flex-direction:column;
+    background:var(--paper);
+    padding:clamp(40px,7vh,72px) 0 clamp(30px,5vh,54px);
+  }
+  .brain-rail{
+    position:relative;top:auto;left:auto;order:1;
+    justify-content:center;
+    padding:0 clamp(20px,6vw,40px);
+    margin-bottom:clamp(20px,3.4vh,32px);
+  }
+  .brain-copy{
+    order:2;align-items:center;text-align:center;
+    padding:0 clamp(20px,6vw,40px);
+  }
+  .brain-media{
+    position:relative;inset:auto;order:3;
+    width:100%;aspect-ratio:1025 / 540;
+    /* the phone gets the diagram itself rather than the room it hangs
+       in: at this width the full plate rendered the two brains about
+       forty pixels tall. Also less than half the bytes. */
+    background-image:url("assets/images/s5-brain-phone.webp");
+    background-size:cover;background-position:center;
+    background-color:var(--paper);
+    margin:clamp(26px,4.4vh,44px) 0 0;
+  }
+  .brain-foot{
+    order:4;justify-content:center;text-align:center;
+    padding:clamp(24px,4vh,40px) clamp(20px,6vw,40px) 0;
+  }
+  .brain-h,.br-eyebrow{text-align:center}
+  .brain-sub{text-align:center}
+
+  /* ── everything reads from the middle ──────────────────
+     A phone column is narrow enough that ragged-left type
+     leaves one long empty edge. Centring closes it.
+     ──────────────────────────────────────────────────── */
+  .hero-copy,.fs-copy,.ledger-copy,.lc,.custom-copy,
+  .brain-copy,.p1-copy,.nx-copy,.cx-copy,.ftr-say{
+    align-items:center;text-align:center;
+  }
+  .hero-rail,.fs-rail,.ledger-rail,.p1-rail,.nx-rail,.cx-rail,
+  .prod-rail,.nx-top,.ftr-top,.ftr-eye,.brain-rail{
+    justify-content:center;
+  }
+  .hero-h,.hero-sub,.fs-h,.fs-sub,.ledger-h,.ledger-sub,
+  .custom-h,.custom-sub,.p1-h,.p1-kind,.p1-sub,
+  .nx-h,.nx-sub,.cx-h,.cx-sub,.ftr-h,.ftr-sub,.prod-sub{
+    text-align:center;
+  }
+  /* the line masks are width:max-content, so they need centring too */
+  .hero-h span,.fs-h span,.ledger-h span,.custom-h span,
+  .brain-h span,.p1-h span,.nx-h span,.cx-h span,.prod-h span{
+    margin-inline:auto;
+  }
+  .hero-actions,.p1-cta,.nx-actions,.cx-actions,.ftr-actions,
+  .custom-cta,.brain-cta,.fs-cta{
+    justify-content:center;
+  }
+  .p1-line{margin-inline:auto}
+
+  /* rules that divided columns now sit under a centred stack */
+  .cx-steps,.hero-stats,.prod-index{justify-content:center}
+  /* three across rather than a 2+1 wrap, which orphaned the third
+     under a divider belonging to a row that was no longer there */
+  .p1-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+  .p1-stats li{
+    text-align:center;align-items:center;justify-content:flex-start;
+    padding:0 clamp(4px,1.6vw,10px);
+    border-left:1px solid var(--paper-rule);
+  }
+  .p1-stats li:first-child{border-left:0;padding-left:clamp(4px,1.6vw,10px)}
+  .p1-s-k{line-height:1.4}
+  .p1-foot{text-align:center}
+
+  .cx-foot-inner{justify-content:center;text-align:center}
+  .cx-ops{text-align:center;border-left:0;padding-left:0}
+
+  .nx-main{gap:clamp(14px,2.4vh,24px)}
+  .nx{min-height:0}
+  .nx-foot,.nx-f-l,.nx-f-r{justify-content:center;text-align:center}
+  .nx-brand{align-items:center}
+  .nx-index{justify-content:center}
+  .cx-details,.cx-detail{justify-content:center;text-align:center}
+  .cx-index{justify-content:center;text-align:center}
+  .cx-card-top{justify-content:center;flex-direction:column;gap:6px;text-align:center}
+  .cx-heard{justify-content:center}
+  .cx-send{justify-content:center;text-align:center}
+  .prod-row li{justify-content:center}
+  .lc,.ledger-state{text-align:center}
+
+  /* ── hero ──────────────────────────────────────────────
+     The rail is a grid whose middle column is a 1fr rule, so
+     centring the box does nothing; the rule has to stop being
+     elastic first.
+     ──────────────────────────────────────────────────── */
+  .hero-rail{display:flex;justify-content:center;align-items:center}
+  .rail-line{flex:none;width:clamp(30px,10vw,56px);min-width:0}
+
+  /* The lane labels hang in a band above the photograph with a
+     leader line dropping into it. At this width the band is most
+     of a screen of nothing and the lines end in mid-air, so the
+     labels become a plain caption row and the band closes. */
+  .hero-fig{--band:0px;display:flex;flex-direction:column;min-height:0}
+  .hero-fig img{height:auto}
+  .hero-fig::after{top:0}
+  .hero-fig figcaption{
+    position:relative;inset:auto;order:-1;pointer-events:auto;
+    display:flex;flex-wrap:wrap;justify-content:center;
+    gap:clamp(8px,2vh,12px) clamp(16px,5vw,30px);
+    padding:clamp(18px,3vh,26px) clamp(20px,6vw,40px) clamp(16px,2.6vh,22px);
+  }
+  .tag{position:relative;left:auto;top:auto;transform:none}
+  .tag::after{display:none}
+
+  /* three figures over two columns left an empty cell; the third
+     takes the full width instead */
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .hs{justify-content:center;text-align:center}
+  .hs:nth-child(3){grid-column:1 / -1;border-right:0}
+  .hs.wide{justify-content:center}
+
+  /* ── footer ────────────────────────────────────────────
+     The 700px block stacks these but keeps them flush left,
+     and once a flex box turns to a column it is align-items,
+     not justify-content, that centres the children.
+     ──────────────────────────────────────────────────── */
+  .nx-foot{flex-direction:column;align-items:center;gap:12px}
+  .cx-foot-inner{align-items:center}
+
+  /* ── footer ────────────────────────────────────────────
+     A phone footer is a left-ranged index, not a centred
+     poster: two columns of links, the groups that carry a
+     field or a sentence full width, and the legal matter
+     last. The product sub-labels go, they are the smallest
+     type on the page and add ten lines of height.
+     ──────────────────────────────────────────────────── */
+  .ftr-inner{padding:clamp(34px,5vh,56px) clamp(20px,5.6vw,40px) clamp(16px,2.4vh,24px)}
+  .ftr-top{flex-direction:column;align-items:flex-start;gap:clamp(14px,2.4vh,20px)}
+  .ftr-brand{align-items:flex-start}
+  .ftr-tag{padding-left:0}
+  .ftr-body{padding:clamp(26px,4vh,40px) 0 clamp(22px,3.4vh,32px);gap:clamp(26px,4vh,36px)}
+  /* these three are named in the centring block above, and a rule on
+     the element beats text-align inherited from .ftr-say */
+  .ftr-say,.ftr-h,.ftr-sub{align-items:flex-start;text-align:left}
+  .ftr-eye{justify-content:flex-start}
+  .ftr-h{font-size:clamp(23px,6.4vw,30px)}
+  .ftr-h span{margin-inline:0}
+  .ftr-actions{justify-content:flex-start}
+
+  .ftr-nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,3.6vh,30px) clamp(16px,4vw,26px)}
+  .ftr-col{align-items:flex-start;text-align:left;border-left:0;padding-left:0;gap:clamp(7px,1.1vh,11px)}
+  .ftr-col a{align-items:flex-start;min-height:0;padding:2px 0}
+  .ftr-col a i{display:none}
+  .ftr-loop{grid-column:1 / -1}
+  .ftr-h6{margin-bottom:2px}
+  .ftr-form{max-width:340px}
+
+  .ftr-base{
+    flex-direction:column;align-items:flex-start;text-align:left;
+    gap:clamp(14px,2.2vh,18px);
+  }
+  .ftr-social{margin-left:0;gap:22px}
+  .ftr-social a{min-width:44px;min-height:44px;display:grid;place-items:center;margin:-11px}
+  .ftr-ops{text-align:left;border-left:0;padding-left:0}
+  .ftr-strip{
+    flex-direction:column;align-items:flex-start;gap:8px;text-align:left;
+  }
+  .ftr-strip .pr-rule{display:none}
+
+  /* ── section 07 ────────────────────────────────────────
+     The mark and the rail fought for one line at this width,
+     and the transition that docks onto the mark does not run
+     on phones anyway, so nothing is left hanging.
+     ──────────────────────────────────────────────────── */
+  .nx-brand{display:none}
+  .nx-top{justify-content:center;padding-bottom:clamp(10px,2vh,18px)}
+  .nx-inner{padding:clamp(26px,4.4vh,44px) clamp(20px,5.6vw,40px)}
+  .nx-main{padding:0}
+  .nx-h{font-size:clamp(34px,9.4vw,54px)}
+  .nx-fig{margin-top:clamp(6px,1.4vh,14px)}
+}
+
+
+/* ── reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  body::after{display:none}
+  .js [data-lines] span i,.js [data-reveal],.js [data-row],.js [data-card]{
+    opacity:1!important;transform:none!important;
+  }
+  .preloader{display:none}
+}

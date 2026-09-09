@@ -1,0 +1,13 @@
+# Only the site itself is deployed. The rest of this folder is the
+# workshop: the mirrored reference site, source PNGs, installers and
+# export zips, about 170MB of things Render neither needs nor should
+# ever serve. Ignore everything, then name what ships.
+
+/*
+
+!/.gitignore
+!/render.yaml
+!/README.md
+!/serve.py
+!/START-SITE.cmd
+!/site/

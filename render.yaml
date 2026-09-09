@@ -1,0 +1,26 @@
+# Render blueprint. Either commit this and use "New > Blueprint",
+# or skip it and set the two fields by hand on a Static Site:
+#   Build Command    (leave empty)
+#   Publish Directory  site
+#
+# site/ is the publish root, so index.html is served at / and the
+# assets it references resolve from site/assets/.
+
+services:
+  - type: web
+    name: yorilabs-ai
+    runtime: static
+    staticPublishPath: ./site
+
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      # hashed-name assets could be cached hard; these are not, so keep
+      # it modest and let revalidation do the work
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=3600, must-revalidate
