@@ -73,7 +73,7 @@
 
   // Every slide in the product deck sits absolutely inside one sticky
   // pin, so they all share an offsetTop and #bidyori would land on
-  // Site-Mirror. Work out where that product is actually settled and
+  // Site Mirror. Work out where that product is actually settled and
   // scroll there instead, so the footer's product list really works.
   function productStop(i) {
     var deck = document.querySelector('.pdeck');
