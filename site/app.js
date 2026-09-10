@@ -102,7 +102,20 @@
       var t = document.querySelector(id);
       if (!t) return;
       e.preventDefault();
-      if (lenis) lenis.scrollTo(t, { duration: 1.9 });
+
+      // Section 07 is absolutely placed inside the outro's sticky pin, so
+      // it shares an offsetTop with the whole 500vh transition. Sending a
+      // link there drops you on frame zero, where the mark is scaled to
+      // tens of thousands of pixels and all you see is the blue disc.
+      // Aim at the far end of the run, where 07 has actually arrived.
+      var y = null;
+      if (id === '#contact' && window.matchMedia('(min-width:1001px)').matches) {
+        var outroEl = document.querySelector('.outro');
+        if (outroEl) y = outroEl.offsetTop + (outroEl.offsetHeight - window.innerHeight);
+      }
+
+      if (lenis) lenis.scrollTo(y !== null ? y : t, { duration: 1.9 });
+      else if (y !== null) window.scrollTo({ top: y, behavior: 'smooth' });
       else t.scrollIntoView({ behavior: 'smooth' });
     });
   });

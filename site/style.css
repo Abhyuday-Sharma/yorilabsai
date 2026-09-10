@@ -187,6 +187,9 @@ body.loaded .preloader{pointer-events:none}
 }
 .btn-solid i{font-style:normal;font-size:1.05em}
 .btn-solid:hover{background:var(--accent-solid)}
+/* a product with nowhere to go yet: it keeps the shape of the row it
+   sits in, but takes no pointer, no hover and no focus ring */
+.btn-solid.is-dead{cursor:default;pointer-events:none;opacity:.42}
 .btn-text{
   font-size:clamp(13px,1.05vw,15px);color:var(--paper-ink);
   border-bottom:1px solid currentColor;padding-bottom:2px;transition:opacity .22s;
