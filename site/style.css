@@ -1026,6 +1026,19 @@ html:not(.js) .outro-field{display:none}
 }
 
 .ftr-actions{display:flex;align-items:stretch;gap:clamp(18px,2.2vw,36px)}
+/* the address sits under the call rather than in a column of its own */
+.ftr-mail{
+  display:inline-flex;flex-direction:column;gap:2px;
+  margin-top:clamp(16px,2.4vh,24px);color:var(--paper-ink);
+  transition:color .22s;
+}
+.ftr-mail b{font-weight:400;font-size:clamp(13px,1.02vw,15.5px);letter-spacing:-.008em}
+.ftr-mail i{
+  font-style:normal;font-family:var(--f-mono);
+  font-size:clamp(8.5px,.72vw,10.5px);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--paper-mute);
+}
+.ftr-mail:hover{color:var(--brand-blue)}
 .ftr-cta{
   display:inline-flex;align-items:center;gap:clamp(16px,2vw,32px);
   background:var(--paper-ink);color:var(--paper);
@@ -1049,7 +1062,7 @@ html:not(.js) .outro-field{display:none}
 .ftr-nav{
   display:grid;
   /* the subscribe field needs a real box, so the last column is wider */
-  grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.6fr);
+  grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,1.6fr);
   gap:clamp(16px,1.9vw,32px);
 }
 .ftr-col{
